@@ -1,0 +1,91 @@
+---
+/**
+ * Base layout for marketing pages. Starlight pages use their own shell;
+ * shared look comes from tokens.css + starlight.css.
+ */
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/site.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BetaBanner from '../components/BetaBanner.astro';
+import { SITE_TITLE } from '../config/site';
+import { withBase } from '../lib/url';
+
+import atkinson400 from '../assets/fonts/atkinson-hyperlegible-400-latin.woff2?url';
+import bricolage from '../assets/fonts/bricolage-grotesque-var-latin.woff2?url';
+
+interface Props {
+  /** Page <title> (suffixed with the site name). */
+  title: string;
+  /** Meta + OG description. */
+  description: string;
+  /** Site-absolute path of this page, e.g. "/how-it-works/". */
+  path: string;
+}
+
+const { title, description, path } = Astro.props;
+
+const canonical = new URL(withBase(path), Astro.site);
+const ogImage = new URL(withBase('/og-default.png'), Astro.site);
+const fullTitle = path === '/' ? `${SITE_TITLE} — ${title}` : `${title} · ${SITE_TITLE}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="OELTKit blog"
+      href={withBase('/rss.xml')}
+    />
+
+    <link rel="preload" href={atkinson400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Resolve theme before paint; mirrors Starlight ('starlight-theme'). -->
+    <script is:inline>
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('starlight-theme');
+        } catch {}
+        const theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <BetaBanner />
+    <Header currentPath={path} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

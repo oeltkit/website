@@ -1,0 +1,145 @@
+---
+/**
+ * Global marketing header: logo · How it works · Components · Standards ·
+ * Docs · GitHub (star count) · "Get started" CTA.
+ *
+ * The star count is fetched at build time with a short timeout and degrades
+ * to a plain GitHub link if the API (or the repo) isn't available yet.
+ */
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { GITHUB_REPO, GITHUB_REPO_URL, NAV_ITEMS } from '../config/site';
+import { withBase } from '../lib/url';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath } = Astro.props;
+
+let starCount: string | null = null;
+try {
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
+    signal: AbortSignal.timeout(3000),
+    headers: { Accept: 'application/vnd.github+json' },
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (typeof data.stargazers_count === 'number') {
+      starCount = new Intl.NumberFormat('en', { notation: 'compact' }).format(
+        data.stargazers_count
+      );
+    }
+  }
+} catch {
+  /* Repo not public yet, offline build, or rate-limited — link still works. */
+}
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="header__home" href={withBase('/')} aria-label="OELTKit home">
+      <Logo />
+    </a>
+
+    <nav class="header__nav" aria-label="Main">
+      <ul>
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a
+                href={withBase(item.href)}
+                aria-current={currentPath === item.href ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a class="header__github" href={GITHUB_REPO_URL}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+              ></path>
+            </svg>
+            GitHub{starCount && <span class="header__stars">★ {starCount}</span>}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <ThemeToggle />
+      <a class="btn btn--primary header__cta" href={withBase('/docs/quickstart/')}>Get started</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    border-bottom: var(--oelt-border-w) solid var(--oelt-color-line);
+    background: var(--oelt-color-bg);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--oelt-space-sm) var(--oelt-space-lg);
+    padding-block: var(--oelt-space-sm);
+  }
+
+  .header__home {
+    text-decoration: none;
+    margin-right: auto;
+  }
+
+  .header__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--oelt-space-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__nav a {
+    color: var(--oelt-color-ink);
+    text-decoration: none;
+    font-size: var(--oelt-text-sm);
+    padding: var(--oelt-space-2xs) var(--oelt-space-2xs);
+    border-block-end: var(--oelt-border-w-bold) solid transparent;
+  }
+
+  .header__nav a:hover,
+  .header__nav a[aria-current='page'] {
+    border-block-end-color: var(--oelt-color-accent);
+  }
+
+  .header__github {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--oelt-space-2xs);
+  }
+
+  .header__stars {
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-xs);
+    background: var(--oelt-color-surface-2);
+    border-radius: var(--oelt-radius-pill);
+    padding: 0.05rem 0.5rem;
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--oelt-space-sm);
+  }
+
+  .header__cta {
+    font-size: var(--oelt-text-sm);
+    padding: 0.55em 1.2em;
+  }
+</style>

@@ -1,0 +1,29 @@
+{
+  "name": "@oeltkit/website",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Marketing + docs site for OELTKit — the open source LLM-first e-learning toolkit.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/generate-og.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test:a11y": "playwright test",
+    "test:lighthouse": "lhci autorun",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/starlight": "^0.37.7",
+    "astro": "^5.18.2",
+    "sharp": "^0.35.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.60.0"
+  }
+}

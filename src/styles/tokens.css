@@ -1,0 +1,173 @@
+/*
+ * OELTKit design tokens — the single source of truth for the site's look.
+ *
+ * This file IS the product demo: the same --oelt-* tokens ship as the default
+ * theme of @oeltkit/components. Every color pairing below is checked against
+ * WCAG 2.2 AA (4.5:1 text, 3:1 UI). If you change a value, re-check contrast.
+ *
+ * Theme model (mirrors Starlight):
+ *   - An inline script resolves the stored preference and sets
+ *     html[data-theme="light" | "dark"].
+ *   - With JS disabled the attribute is never set, and the
+ *     prefers-color-scheme block below takes over. Dark tokens are therefore
+ *     declared twice, via the shared custom-property group at the bottom.
+ */
+
+:root {
+  /* ---- Typography ------------------------------------------------------ */
+  --oelt-font-display: 'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', sans-serif;
+  --oelt-font-body: 'Atkinson Hyperlegible', 'Verdana', 'Segoe UI', sans-serif;
+  --oelt-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+
+  --oelt-text-xs: 0.8125rem;
+  --oelt-text-sm: 0.9375rem;
+  --oelt-text-base: 1.0625rem;
+  --oelt-text-lg: 1.1875rem;
+  --oelt-text-xl: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --oelt-text-2xl: clamp(1.55rem, 1.25rem + 1.4vw, 2.15rem);
+  --oelt-text-3xl: clamp(1.9rem, 1.4rem + 2.4vw, 3rem);
+  --oelt-text-hero: clamp(2.5rem, 1.7rem + 4.2vw, 4.5rem);
+
+  --oelt-leading-tight: 1.12;
+  --oelt-leading-snug: 1.3;
+  --oelt-leading-body: 1.62;
+
+  --oelt-tracking-tight: -0.022em;
+  --oelt-tracking-wide: 0.08em;
+
+  /* ---- Spacing & layout ------------------------------------------------ */
+  --oelt-space-2xs: 0.25rem;
+  --oelt-space-xs: 0.5rem;
+  --oelt-space-sm: 0.75rem;
+  --oelt-space-md: 1rem;
+  --oelt-space-lg: 1.5rem;
+  --oelt-space-xl: 2.5rem;
+  --oelt-space-2xl: 4rem;
+  --oelt-space-3xl: 6.5rem;
+
+  --oelt-content-width: 71rem;
+  --oelt-measure: 66ch;
+
+  --oelt-radius-sm: 0.1875rem;
+  --oelt-radius-md: 0.5rem;
+  --oelt-radius-lg: 1rem;
+  --oelt-radius-pill: 999px;
+
+  --oelt-border-w: 1px;
+  --oelt-border-w-bold: 2px;
+
+  /* ---- Motion (zeroed under prefers-reduced-motion below) -------------- */
+  --oelt-duration-quick: 160ms;
+  --oelt-duration-base: 320ms;
+  --oelt-duration-slow: 720ms;
+  --oelt-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* ---- Focus ------------------------------------------------------------ */
+  --oelt-focus-w: 3px;
+  --oelt-focus-offset: 2px;
+
+  /* ---- Light theme ("paper") -------------------------------------------- */
+  --oelt-color-bg: #faf6ee;
+  --oelt-color-surface: #fffdf8;
+  --oelt-color-surface-2: #f1ead9;
+  --oelt-color-ink: #201d16;
+  --oelt-color-ink-soft: #57503f;
+  --oelt-color-line: #ddd3be;
+  --oelt-color-line-strong: #b8ab8d;
+
+  --oelt-color-accent: #166a42;
+  --oelt-color-accent-strong: #0e4a2d;
+  --oelt-color-on-accent: #fffdf8;
+  --oelt-color-accent-wash: #e3eee2;
+
+  --oelt-color-code-bg: #1e1c16;
+  --oelt-color-code-ink: #e9e2d2;
+  --oelt-color-code-accent: #8fdcb1;
+
+  --oelt-color-warn-bg: #f7e8c3;
+  --oelt-color-warn-ink: #594410;
+  --oelt-color-warn-line: #cfa83d;
+
+  --oelt-color-focus: #b2530e;
+
+  --oelt-shadow-card: 0 1px 0 rgb(32 29 22 / 0.06), 0 6px 24px -12px rgb(32 29 22 / 0.18);
+  --oelt-shadow-panel: 0 2px 0 rgb(32 29 22 / 0.05), 0 24px 60px -28px rgb(32 29 22 / 0.32);
+
+  color-scheme: light;
+}
+
+/* ---- Dark theme ("ink") — shared value group --------------------------- */
+/* Declared as a reusable block twice: once for the explicit toggle, once for
+   no-JS users following their OS preference. Keep the two blocks identical. */
+
+html[data-theme='dark'] {
+  --oelt-color-bg: #15130e;
+  --oelt-color-surface: #1d1a13;
+  --oelt-color-surface-2: #262217;
+  --oelt-color-ink: #ece5d3;
+  --oelt-color-ink-soft: #b4aa90;
+  --oelt-color-line: #3a3425;
+  --oelt-color-line-strong: #5c5338;
+
+  --oelt-color-accent: #5bd08f;
+  --oelt-color-accent-strong: #8ae6b3;
+  --oelt-color-on-accent: #0b2818;
+  --oelt-color-accent-wash: #1c2a1c;
+
+  --oelt-color-code-bg: #0e0d09;
+  --oelt-color-code-ink: #e2dac6;
+  --oelt-color-code-accent: #8fdcb1;
+
+  --oelt-color-warn-bg: #2c2410;
+  --oelt-color-warn-ink: #ecd27e;
+  --oelt-color-warn-line: #6b5a26;
+
+  --oelt-color-focus: #ffb066;
+
+  --oelt-shadow-card: 0 1px 0 rgb(0 0 0 / 0.4), 0 6px 24px -12px rgb(0 0 0 / 0.6);
+  --oelt-shadow-panel: 0 2px 0 rgb(0 0 0 / 0.4), 0 24px 60px -28px rgb(0 0 0 / 0.7);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --oelt-color-bg: #15130e;
+    --oelt-color-surface: #1d1a13;
+    --oelt-color-surface-2: #262217;
+    --oelt-color-ink: #ece5d3;
+    --oelt-color-ink-soft: #b4aa90;
+    --oelt-color-line: #3a3425;
+    --oelt-color-line-strong: #5c5338;
+
+    --oelt-color-accent: #5bd08f;
+    --oelt-color-accent-strong: #8ae6b3;
+    --oelt-color-on-accent: #0b2818;
+    --oelt-color-accent-wash: #1c2a1c;
+
+    --oelt-color-code-bg: #0e0d09;
+    --oelt-color-code-ink: #e2dac6;
+    --oelt-color-code-accent: #8fdcb1;
+
+    --oelt-color-warn-bg: #2c2410;
+    --oelt-color-warn-ink: #ecd27e;
+    --oelt-color-warn-line: #6b5a26;
+
+    --oelt-color-focus: #ffb066;
+
+    --oelt-shadow-card: 0 1px 0 rgb(0 0 0 / 0.4), 0 6px 24px -12px rgb(0 0 0 / 0.6);
+    --oelt-shadow-panel: 0 2px 0 rgb(0 0 0 / 0.4), 0 24px 60px -28px rgb(0 0 0 / 0.7);
+
+    color-scheme: dark;
+  }
+}
+
+/* ---- Motion preference -------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --oelt-duration-quick: 0ms;
+    --oelt-duration-base: 0ms;
+    --oelt-duration-slow: 0ms;
+  }
+}

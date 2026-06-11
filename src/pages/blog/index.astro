@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/url';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const formatter = new Intl.DateTimeFormat('en', { dateStyle: 'long' });
+---
+
+<BaseLayout
+  title="Blog"
+  description="Notes from building OELTKit: releases, design decisions, and what we learn making LLM-generated courses ship-ready."
+  path="/blog/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">Blog</span>
+      <h1>Notes from the workshop</h1>
+
+      {
+        posts.length === 0 ? (
+          <div class="blog-empty">
+            <p>
+              No posts yet — the launch post ships with v0.1. Subscribe to the
+              <a href={withBase('/rss.xml')}>RSS feed</a> to catch it.
+            </p>
+          </div>
+        ) : (
+          <ul class="post-list">
+            {posts.map((post) => (
+              <li class="post-list__item">
+                <h2>
+                  <a href={withBase(`/blog/${post.id}/`)}>{post.data.title}</a>
+                </h2>
+                <p class="post-list__meta">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {formatter.format(post.data.pubDate)}
+                  </time>{' '}
+                  · {post.data.author}
+                </p>
+                <p>{post.data.description}</p>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-empty {
+    border: var(--oelt-border-w-bold) dashed var(--oelt-color-line-strong);
+    border-radius: var(--oelt-radius-lg);
+    background: var(--oelt-color-surface);
+    padding: var(--oelt-space-xl);
+    max-width: var(--oelt-measure);
+    margin-top: var(--oelt-space-lg);
+  }
+
+  .blog-empty p {
+    margin: 0;
+  }
+
+  .post-list {
+    list-style: none;
+    margin: var(--oelt-space-xl) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--oelt-space-xl);
+  }
+
+  .post-list__item h2 {
+    margin-bottom: var(--oelt-space-2xs);
+  }
+
+  .post-list__meta {
+    color: var(--oelt-color-ink-soft);
+    font-size: var(--oelt-text-sm);
+  }
+</style>

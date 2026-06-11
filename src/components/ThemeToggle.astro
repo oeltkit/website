@@ -1,0 +1,82 @@
+---
+/**
+ * Manual light/dark toggle for marketing pages. Stores the choice under the
+ * same localStorage key Starlight uses ('starlight-theme') so the preference
+ * follows visitors between marketing pages and docs.
+ *
+ * Progressive enhancement: the button ships hidden and is revealed by its
+ * own script — with JS off, prefers-color-scheme still works via tokens.css.
+ */
+---
+
+<button class="theme-toggle" type="button" hidden data-theme-toggle>
+  <svg class="theme-toggle__icon theme-toggle__icon--sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.5"></circle>
+    <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"></path>
+  </svg>
+  <svg class="theme-toggle__icon theme-toggle__icon--moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"></path>
+  </svg>
+  <span class="visually-hidden" data-theme-label>Switch to dark theme</span>
+</button>
+
+<script>
+  const KEY = 'starlight-theme';
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const label = button?.querySelector('[data-theme-label]');
+
+  function current(): 'light' | 'dark' {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function describe() {
+    if (label) {
+      label.textContent =
+        current() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+    }
+  }
+
+  if (button) {
+    button.hidden = false;
+    describe();
+    button.addEventListener('click', () => {
+      const next = current() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem(KEY, next);
+      } catch {
+        /* private mode etc. — theme still applies for this page view */
+      }
+      describe();
+    });
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.4rem;
+    block-size: 2.4rem;
+    border-radius: var(--oelt-radius-pill);
+    border: var(--oelt-border-w) solid var(--oelt-color-line-strong);
+    background: transparent;
+    color: var(--oelt-color-ink);
+    cursor: pointer;
+    transition: border-color var(--oelt-duration-quick) var(--oelt-ease);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--oelt-color-ink);
+  }
+
+  .theme-toggle__icon--moon,
+  :global(html[data-theme='dark']) .theme-toggle__icon--sun {
+    display: none;
+  }
+
+  :global(html[data-theme='dark']) .theme-toggle__icon--moon {
+    display: block;
+  }
+</style>

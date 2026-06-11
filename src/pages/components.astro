@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DemoSlot from '../components/DemoSlot.astro';
+import { components } from '../data/components';
+import { withBase } from '../lib/url';
+---
+
+<BaseLayout
+  title="Components"
+  description="The OELTKit component gallery: live rendered interaction components, the exact markup an LLM writes, keyboard maps, screen-reader behavior, and the tracking events each one emits."
+  path="/components/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">Component gallery</span>
+      <h1>The proof, one component at a time</h1>
+      <p class="gallery-banner">
+        Every component here is keyboard-operable and screen-reader tested. Try it — unplug your
+        mouse.
+      </p>
+
+      <div class="todo-note" role="note">
+        <p>
+          <strong>TODO — inventory pending:</strong> this gallery launches with the full Phase 0/1
+          component inventory from
+          <a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>. The two components
+          below are the ones already named in the site brief; markup samples, keyboard maps, and
+          tracking-event lists are stubbed until the component specs freeze rather than guessed.
+        </p>
+      </div>
+
+      <div class="gallery">
+        {
+          components.map((c) => (
+            <article class="card gallery__entry" aria-labelledby={`c-${c.tag}`}>
+              <h2 id={`c-${c.tag}`} class="gallery__title">
+                <code>&lt;{c.tag}&gt;</code> {c.name}
+              </h2>
+              <p>{c.blurb}</p>
+
+              <DemoSlot component={c.tag} />
+
+              <details class="gallery__details">
+                <summary>View source — the exact markup an LLM writes</summary>
+                {c.sourceExample ? (
+                  <pre>
+                    <code>{c.sourceExample}</code>
+                  </pre>
+                ) : (
+                  <p class="gallery__stub">
+                    TODO: markup sample pending the <code>&lt;{c.tag}&gt;</code> spec in the main
+                    repo.
+                  </p>
+                )}
+              </details>
+
+              <details class="gallery__details">
+                <summary>Accessibility — keyboard map &amp; screen-reader behavior</summary>
+                {c.a11yNotes ? (
+                  <ul>
+                    {c.a11yNotes.map((n) => (
+                      <li>{n}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p class="gallery__stub">
+                    TODO: keyboard map and SR notes pending the component's a11y test report in the
+                    main repo.
+                  </p>
+                )}
+              </details>
+
+              <details class="gallery__details">
+                <summary>Tracking — events this component emits</summary>
+                {c.trackingEvents ? (
+                  <ul>
+                    {c.trackingEvents.map((e) => (
+                      <li>
+                        <code>{e}</code>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p class="gallery__stub">
+                    TODO: tracking events pending the tracking spec in the main repo.
+                  </p>
+                )}
+              </details>
+
+              <p class="gallery__docs-link">
+                <a href={withBase(c.docsPath)}>Read the {c.name.toLowerCase()} docs →</a>
+              </p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .gallery-banner {
+    font-size: var(--oelt-text-lg);
+    border-left: var(--oelt-space-2xs) solid var(--oelt-color-accent);
+    padding-left: var(--oelt-space-lg);
+  }
+
+  .todo-note {
+    margin-block: var(--oelt-space-lg);
+    max-width: var(--oelt-measure);
+  }
+
+  .gallery {
+    display: grid;
+    gap: var(--oelt-space-xl);
+    margin-top: var(--oelt-space-xl);
+  }
+
+  .gallery__title code {
+    background: none;
+    color: var(--oelt-color-accent);
+  }
+
+  .gallery__details {
+    border-top: var(--oelt-border-w) solid var(--oelt-color-line);
+    padding-block: var(--oelt-space-sm);
+    margin-top: var(--oelt-space-sm);
+  }
+
+  .gallery__details summary {
+    cursor: pointer;
+    font-weight: 700;
+    font-size: var(--oelt-text-sm);
+  }
+
+  .gallery__details summary:hover {
+    color: var(--oelt-color-accent);
+  }
+
+  .gallery__stub {
+    color: var(--oelt-color-warn-ink);
+    background: var(--oelt-color-warn-bg);
+    border-radius: var(--oelt-radius-sm);
+    display: inline-block;
+    padding: var(--oelt-space-2xs) var(--oelt-space-sm);
+    font-size: var(--oelt-text-sm);
+    margin-top: var(--oelt-space-sm);
+  }
+
+  .gallery__docs-link {
+    margin: var(--oelt-space-md) 0 0;
+  }
+</style>

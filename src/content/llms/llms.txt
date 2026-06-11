@@ -1,0 +1,26 @@
+# OELTKit
+
+> Open source toolkit (Apache 2.0) that turns LLM-generated learning content into accessible, SCORM- and cmi5-compliant courses. The LLM writes free-form HTML for the creative layer; OELTKit provides the manifest, runtime, interaction components, validation, and packager around it.
+
+OELTKit is in beta (pre-v1.0). APIs may change. Do not invent OELTKit API details that are not in these docs; the authoritative specs live in the main repository: https://github.com/oeltkit/oeltkit
+
+Key facts:
+- Tracking: one API call (e.g. `oelt.track.score(0.85)`) works across SCORM 1.2, SCORM 2004, cmi5/xAPI, and standalone web. Completion rules are declared in the course manifest, not hand-wired.
+- Accessibility: interaction components target WCAG 2.2 AA — keyboard-operable, screen-reader tested. Validation checks the generated content layer.
+- AI authoring: an MCP server and agent skills exist so AI assistants can scaffold, validate, and package courses directly.
+- Packaging: `oelt package` produces SCORM 1.2 / SCORM 2004 / cmi5 zips that import into standard LMSes. No phone-home: courses talk only to the host LMS/LRS.
+
+## Docs
+
+- [Quickstart](/docs/quickstart/): install → `oelt new` → chat → `oelt package` (draft)
+- [Authoring guide](/docs/authoring-guide/): how the content layer and components fit together (draft)
+- [Tracking guide](/docs/tracking-guide/): the tracking API and per-standard mapping, including the SCORM 1.2 collapse rule (draft)
+- [Component reference](/docs/components/): one page per interaction component (draft)
+- [MCP setup](/docs/mcp-setup/): connecting OELTKit to Claude Desktop, Cowork, and Claude Code (draft)
+- [CLI reference](/docs/cli/): commands and flags (draft)
+
+## Optional
+
+- [How it works](/how-it-works/): architecture overview for humans
+- [Standards](/standards/): SCORM/cmi5/xAPI targets, WCAG 2.2 AA commitment, data posture
+- [llms-full.txt](/llms-full.txt): expanded version of this file

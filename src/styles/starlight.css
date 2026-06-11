@@ -1,0 +1,62 @@
+/*
+ * Maps Starlight's --sl-* theme variables onto the --oelt-* tokens so the
+ * docs share the exact palette and type of the marketing pages (and of the
+ * product's default theme).
+ */
+
+:root {
+  --sl-font: var(--oelt-font-body);
+  --sl-font-mono: var(--oelt-font-mono);
+
+  --__sl-font-headings: var(--oelt-font-display);
+}
+
+/* Headings in the display face. */
+.sl-markdown-content :is(h1, h2, h3, h4, h5),
+.content-panel h1,
+.hero h1 {
+  font-family: var(--oelt-font-display);
+  letter-spacing: var(--oelt-tracking-tight);
+}
+
+/*
+ * One mapping serves both themes: the --oelt-* tokens flip under
+ * html[data-theme], so the --sl-* indirection below inherits the flip.
+ * (Starlight's "white" is always the text color, "black" the page bg.)
+ */
+:root {
+  --sl-color-accent-low: var(--oelt-color-accent-wash);
+  --sl-color-accent: var(--oelt-color-accent);
+  --sl-color-accent-high: var(--oelt-color-accent-strong);
+  --sl-color-white: var(--oelt-color-ink);
+  --sl-color-gray-1: var(--oelt-color-ink);
+  --sl-color-gray-2: var(--oelt-color-ink-soft);
+  --sl-color-gray-3: var(--oelt-color-ink-soft);
+  --sl-color-gray-4: var(--oelt-color-line-strong);
+  --sl-color-gray-5: var(--oelt-color-line);
+  --sl-color-gray-6: var(--oelt-color-surface);
+  --sl-color-gray-7: var(--oelt-color-surface-2);
+  --sl-color-black: var(--oelt-color-bg);
+  --sl-color-bg: var(--oelt-color-bg);
+  --sl-color-bg-nav: var(--oelt-color-surface);
+  --sl-color-bg-sidebar: var(--oelt-color-bg);
+  --sl-color-bg-inline-code: var(--oelt-color-surface-2);
+  --sl-color-text: var(--oelt-color-ink);
+  --sl-color-text-accent: var(--oelt-color-accent);
+  --sl-color-hairline: var(--oelt-color-line);
+  --sl-color-hairline-light: var(--oelt-color-line);
+  --sl-color-hairline-shade: var(--oelt-color-line);
+}
+
+/* Visible, token-colored focus in docs too. */
+:root :focus-visible {
+  outline: var(--oelt-focus-w) solid var(--oelt-color-focus);
+  outline-offset: var(--oelt-focus-offset);
+}
+
+/* Starlight site title in the display face. */
+.site-title {
+  font-family: var(--oelt-font-display);
+  font-weight: 640;
+  color: var(--oelt-color-ink);
+}

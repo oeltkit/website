@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page doesn't exist. Here's the way back."
+  path="/404/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">404</span>
+      <h1>This page didn't pass validation.</h1>
+      <p>The address doesn't match anything here. Useful places to go instead:</p>
+      <ul>
+        <li><a href={withBase('/')}>Home</a></li>
+        <li><a href={withBase('/docs/quickstart/')}>Quickstart</a></li>
+        <li><a href={withBase('/docs/')}>Docs</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

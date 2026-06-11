@@ -1,0 +1,94 @@
+---
+/**
+ * Slot for a live component demo, gated behind DEMOS_ENABLED.
+ *
+ * - DEMOS_ENABLED=false (default until @oeltkit/components is on npm):
+ *   renders an honest "coming with v0.1" placeholder card.
+ * - DEMOS_ENABLED=true: renders the slotted demo markup (the real web
+ *   component plus its tracking inspector). Enabling is a config change +
+ *   dependency add — pages already carry the slot structure.
+ */
+import { DEMOS_ENABLED } from '../config/site';
+
+interface Props {
+  /** Component tag the demo will render, e.g. "oelt-mcq". */
+  component: string;
+  /** Short line about what the live demo will show. */
+  promise?: string;
+}
+
+const { component, promise } = Astro.props;
+---
+
+{
+  DEMOS_ENABLED ? (
+    <figure class="demo-slot demo-slot--live">
+      <slot />
+    </figure>
+  ) : (
+    <div class="demo-slot demo-slot--placeholder">
+      <p class="demo-slot__flag">Coming with v0.1</p>
+      <p class="demo-slot__name">
+        <code>&lt;{component}&gt;</code>
+      </p>
+      <p class="demo-slot__copy">
+        A live, keyboard-operable demo renders here the moment{' '}
+        <code>@oeltkit/components</code> is published — no mockups in the
+        meantime.{promise && ` ${promise}`}
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .demo-slot {
+    margin: 0;
+    border-radius: var(--oelt-radius-lg);
+  }
+
+  .demo-slot--placeholder {
+    border: var(--oelt-border-w-bold) dashed var(--oelt-color-line-strong);
+    background: var(--oelt-color-surface);
+    padding: var(--oelt-space-xl);
+    text-align: center;
+  }
+
+  .demo-slot__flag {
+    display: inline-block;
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-xs);
+    letter-spacing: var(--oelt-tracking-wide);
+    text-transform: uppercase;
+    color: var(--oelt-color-warn-ink);
+    background: var(--oelt-color-warn-bg);
+    border: var(--oelt-border-w) solid var(--oelt-color-warn-line);
+    border-radius: var(--oelt-radius-pill);
+    padding: 0.2rem 0.75rem;
+    margin: 0 0 var(--oelt-space-sm);
+  }
+
+  .demo-slot__name {
+    font-size: var(--oelt-text-xl);
+    font-family: var(--oelt-font-mono);
+    margin-bottom: var(--oelt-space-xs);
+  }
+
+  .demo-slot__name code {
+    background: none;
+    color: var(--oelt-color-accent);
+  }
+
+  .demo-slot__copy {
+    color: var(--oelt-color-ink-soft);
+    font-size: var(--oelt-text-sm);
+    max-width: 44ch;
+    margin-inline: auto;
+    margin-bottom: 0;
+  }
+
+  .demo-slot--live {
+    border: var(--oelt-border-w) solid var(--oelt-color-line);
+    background: var(--oelt-color-surface);
+    padding: var(--oelt-space-xl);
+  }
+</style>

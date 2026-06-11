@@ -1,0 +1,21 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# generated at build (prebuild script)
+public/og-default.png
+
+# environment
+.env
+.env.production
+
+# test artifacts
+test-results/
+playwright-report/
+.lighthouseci/
+
+# os
+.DS_Store

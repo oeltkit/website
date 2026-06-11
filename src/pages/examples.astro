@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { examples } from '../data/examples';
+---
+
+<BaseLayout
+  title="Examples"
+  description="Real courses generated with OELTKit: live previews, the original prompt that produced each one, and downloadable SCORM and cmi5 packages."
+  path="/examples/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">Examples</span>
+      <h1>Every course below started as a single prompt.</h1>
+      <p class="lede">
+        Each example is a real generated course: a live preview, the exact prompt that produced
+        it, and the SCORM/cmi5 packages ready to import into your LMS.
+      </p>
+
+      {
+        examples.length === 0 ? (
+          <div class="examples-empty">
+            <p>
+              <strong>Nothing here yet — on purpose.</strong> This page only ever shows real
+              output from the toolkit, and the toolkit's first dogfood courses are being built in
+              Phase 1 right now. No staged screenshots, no hand-polished "examples" the tool
+              didn't actually make.
+            </p>
+            <p>
+              Watch <a href="https://github.com/oeltkit/oeltkit">the repo</a> — the first three to
+              five generated courses land here, prompts and packages included, even if they're
+              modest.
+            </p>
+          </div>
+        ) : (
+          <div class="card-grid">
+            {examples.map((ex) => (
+              <article class="card">
+                <h2>{ex.title}</h2>
+                <h3>The prompt</h3>
+                <blockquote>{ex.prompt}</blockquote>
+                <p>
+                  <a class="btn btn--ghost" href={ex.previewUrl}>
+                    Live preview
+                  </a>
+                </p>
+                <ul>
+                  {ex.downloads.map((d) => (
+                    <li>
+                      <a href={d.url}>{d.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lede {
+    font-size: var(--oelt-text-lg);
+    color: var(--oelt-color-ink-soft);
+  }
+
+  .examples-empty {
+    border: var(--oelt-border-w-bold) dashed var(--oelt-color-line-strong);
+    border-radius: var(--oelt-radius-lg);
+    background: var(--oelt-color-surface);
+    padding: var(--oelt-space-xl);
+    max-width: var(--oelt-measure);
+    margin-top: var(--oelt-space-xl);
+  }
+
+  .examples-empty p:last-child {
+    margin-bottom: 0;
+  }
+</style>

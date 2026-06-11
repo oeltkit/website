@@ -1,0 +1,43 @@
+---
+/**
+ * Site-wide beta notice, per the honesty constraints in SITE-STRUCTURE.md.
+ * Shown on every page (marketing via BaseLayout, docs via the Starlight
+ * Banner override) until v1.0 ships.
+ */
+import { withBase } from '../lib/url';
+---
+
+<aside class="beta-banner" aria-label="Beta notice">
+  <p>
+    <strong>Beta</strong> — OELTKit is pre-v1.0. APIs may change, and the
+    verified-LMS list is short on purpose.
+    <a href={withBase('/community/#roadmap')}>See the roadmap</a>
+  </p>
+</aside>
+
+<style>
+  .beta-banner {
+    background: var(--oelt-color-warn-bg);
+    color: var(--oelt-color-warn-ink);
+    border-bottom: var(--oelt-border-w) solid var(--oelt-color-warn-line);
+    text-align: center;
+    font-size: var(--oelt-text-sm);
+  }
+
+  .beta-banner p {
+    margin: 0 auto;
+    max-width: none;
+    padding: var(--oelt-space-xs) var(--oelt-space-md);
+  }
+
+  .beta-banner strong {
+    text-transform: uppercase;
+    letter-spacing: var(--oelt-tracking-wide);
+    font-size: var(--oelt-text-xs);
+  }
+
+  .beta-banner a {
+    color: inherit;
+    text-decoration: underline;
+  }
+</style>

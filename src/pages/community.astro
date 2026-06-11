@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GITHUB_REPO_URL } from '../config/site';
+---
+
+<BaseLayout
+  title="Community"
+  description="How to contribute to OELTKit — component proposals as the on-ramp — plus governance, the public roadmap, and the vendor-neutrality commitment."
+  path="/community/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">Community</span>
+      <h1>Built in the open, useful to everyone</h1>
+      <p class="lede">
+        OELTKit is Apache 2.0 and developed in public. The fastest way to shape it is to tell us
+        what component your courses are missing.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--rule" id="contribute">
+    <div class="container">
+      <h2>Contribute</h2>
+      <p>
+        <strong>Component proposals are the on-ramp.</strong> You don't need to write code to make
+        OELTKit better — describe an interaction you keep building by hand (the markup you wish an
+        LLM could write, how a keyboard user should drive it, what it should report to the LMS) and
+        open it as a proposal. Specs that start from real course needs become the best components.
+      </p>
+      <ul>
+        <li>
+          <a href={`${GITHUB_REPO_URL}/issues`}>Open a component proposal or bug report</a>
+        </li>
+        <li>
+          <a href={`${GITHUB_REPO_URL}/blob/main/CONTRIBUTING.md`}>Contributing guide</a> — code,
+          docs, and testing contributions all welcome
+        </li>
+        <li>
+          Accessibility reviews are first-class contributions: if you use assistive technology and
+          something doesn't work, that's a priority issue.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--rule" id="governance">
+    <div class="container">
+      <h2>Governance</h2>
+      <p>
+        OELTKit is maintainer-governed during the beta, with decisions made in public issues and
+        ADRs in the main repo. As the contributor base grows, governance formalizes — the
+        commitment that doesn't change is below.
+      </p>
+      <p>
+        <strong>Vendor neutrality:</strong> OELTKit is incubated by
+        <a href="https://www.bcltraining.com">BCL Training</a>, and it stays useful to people who
+        never become BCL clients. No feature is held back for a paid tier, no LMS or AI vendor gets
+        preferential treatment, and the standards targets are decided by what practitioners need —
+        not by anyone's product roadmap.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--rule" id="roadmap">
+    <div class="container">
+      <h2>Roadmap</h2>
+      <p>
+        The roadmap lives on GitHub where you can comment on it, not in a slide deck:
+        <a href={`${GITHUB_REPO_URL}/projects`}>OELTKit project board</a>.
+      </p>
+      <p class="funding-note">
+        Sponsorship via Open Collective is planned; the link will appear here when the collective
+        is live — not before.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lede {
+    font-size: var(--oelt-text-lg);
+    color: var(--oelt-color-ink-soft);
+  }
+
+  .funding-note {
+    color: var(--oelt-color-ink-soft);
+    font-size: var(--oelt-text-sm);
+  }
+</style>

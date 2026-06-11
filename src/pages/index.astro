@@ -1,0 +1,306 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DemoSlot from '../components/DemoSlot.astro';
+import { GITHUB_REPO_URL, SITE_TAGLINE } from '../config/site';
+import { withBase } from '../lib/url';
+---
+
+<BaseLayout
+  title="Your AI builds the course. OELTKit makes it count."
+  description={SITE_TAGLINE}
+  path="/"
+>
+  <!-- Hero -->
+  <section class="hero section">
+    <div class="container hero__grid">
+      <div class="hero__copy">
+        <h1 class="reveal">Your AI builds the course. OELTKit&nbsp;makes it count.</h1>
+        <p class="hero__sub reveal reveal--2">
+          An open source toolkit that turns LLM-generated learning content into accessible, SCORM-
+          and cmi5-compliant courses your LMS understands. Keep the bespoke. Standardize the
+          plumbing.
+        </p>
+        <div class="hero__ctas reveal reveal--3">
+          <a class="btn btn--primary" href={withBase('/docs/quickstart/')}>
+            Get started in 5 minutes
+          </a>
+          <a class="btn btn--ghost" href={withBase('/examples/')}>See a generated course</a>
+        </div>
+      </div>
+
+      <!-- Split panel: prompt in, tracked course out. Typographic, no fake
+           screenshots — oelt.track.score is the real API; the LMSSetValue
+           lines are standard SCORM 1.2. -->
+      <figure class="hero__visual reveal reveal--3" aria-label="From one chat prompt to a course reporting real SCORM calls">
+        <div class="chat-panel">
+          <p class="chat-panel__label">You, to your AI assistant</p>
+          <p class="chat-panel__bubble">
+            Build me a 15-minute course on GDPR basics with a scored quiz…
+          </p>
+        </div>
+        <div class="hero__arrow" aria-hidden="true">→</div>
+        <div class="code-panel track-panel">
+          <p class="code-panel__bar">GDPR Basics · tracking inspector</p>
+          <pre><code><span class="track-line">oelt.track.score(0.85)</span>
+<span class="track-line">→ LMSSetValue("cmi.core.score.raw", "85")</span>
+<span class="track-line">→ LMSCommit("") <span class="track-ok">✓ accepted</span></span></code></pre>
+        </div>
+        <figcaption class="hero__caption">
+          The flow, in the API's own words — a live demo lands here with v0.1.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="section section--rule">
+    <div class="container">
+      <span class="eyebrow">The problem</span>
+      <h2>Bespoke AI courses are amazing. Then you upload them.</h2>
+      <blockquote class="problem__quote">
+        You've seen what Claude can do: interactive scenarios, beautiful one-off learning
+        experiences, in minutes. Then reality hits — the LMS needs SCORM. Completion doesn't
+        report. The quiz score goes nowhere. A screen reader can't navigate it. Legal asks about
+        WCAG. Every generated course is a brilliant prototype that can't ship.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section class="section section--rule">
+    <div class="container">
+      <span class="eyebrow">The fix</span>
+      <h2>Keep the creativity. Standardize everything underneath.</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Tracks out of the box</h3>
+          <p>
+            One line — <code>oelt.track.score(0.85)</code> — works in SCORM 1.2, SCORM 2004, cmi5,
+            or no LMS at all. Completion rules are declared, not hand-wired.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Accessible by construction</h3>
+          <p>
+            Every interaction component ships keyboard-ready and screen-reader tested to WCAG 2.2
+            AA. Validation catches what generation misses.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Built for AI authoring</h3>
+          <p>
+            An MCP server, agent skills, and docs written for model consumption. Your AI assistant
+            already knows how to use it — that's the point.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works strip -->
+  <section class="section section--tight section--rule">
+    <div class="container">
+      <ol class="steps">
+        <li class="steps__item">
+          <h3><span class="steps__num" aria-hidden="true">1</span> Chat</h3>
+          <p>Describe the course to Claude (or any agent) with OELTKit connected.</p>
+        </li>
+        <li class="steps__item">
+          <h3><span class="steps__num" aria-hidden="true">2</span> Validate</h3>
+          <p>
+            Accessibility, tracking, and packaging checks run automatically; the AI fixes its own
+            findings.
+          </p>
+        </li>
+        <li class="steps__item">
+          <h3><span class="steps__num" aria-hidden="true">3</span> Ship</h3>
+          <p>Download a SCORM or cmi5 package that imports anywhere.</p>
+        </li>
+      </ol>
+      <p><a href={withBase('/how-it-works/')}>How it works, in full →</a></p>
+    </div>
+  </section>
+
+  <!-- Proof -->
+  <section class="section section--rule">
+    <div class="container">
+      <span class="eyebrow">Proof</span>
+      <h2>See it track, live</h2>
+      <DemoSlot
+        component="oelt-mcq"
+        promise="One real question component plus a branching snippet, with a mini tracking inspector. The caption will read: “This isn't a mockup — these are the actual components, tracking live.”"
+      />
+    </div>
+  </section>
+
+  <!-- Open source -->
+  <section class="section section--rule">
+    <div class="container">
+      <span class="eyebrow">License</span>
+      <h2>Open source, open standards, no lock-in.</h2>
+      <p>
+        Apache 2.0. Plain web components — no framework, no build step, no subscription. Works
+        with the LMS you already have and the AI assistant you already use.
+      </p>
+      <p>
+        <a class="btn btn--ghost" href={GITHUB_REPO_URL}>Star OELTKit on GitHub</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta-band section">
+    <div class="container">
+      <h2>Five minutes from prompt to SCORM package.</h2>
+      <p>
+        <a class="btn btn--primary" href={withBase('/docs/quickstart/')}>Start the quickstart</a>
+      </p>
+      <p class="cta-band__sub">
+        <a href={withBase('/blog/')}>Or read why we built this →</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero__grid {
+    display: grid;
+    gap: var(--oelt-space-2xl);
+    align-items: center;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 60rem) {
+    .hero__grid {
+      grid-template-columns: 1.1fr 1fr;
+    }
+  }
+
+  .hero__sub {
+    font-size: var(--oelt-text-lg);
+    color: var(--oelt-color-ink-soft);
+    max-width: 52ch;
+  }
+
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--oelt-space-sm);
+    margin-top: var(--oelt-space-lg);
+  }
+
+  .hero__visual {
+    margin: 0;
+    display: grid;
+    gap: var(--oelt-space-sm);
+    justify-items: start;
+  }
+
+  .chat-panel {
+    background: var(--oelt-color-surface);
+    border: var(--oelt-border-w) solid var(--oelt-color-line);
+    border-radius: var(--oelt-radius-lg);
+    box-shadow: var(--oelt-shadow-card);
+    padding: var(--oelt-space-lg);
+    max-width: 34ch;
+  }
+
+  .chat-panel__label {
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-xs);
+    letter-spacing: var(--oelt-tracking-wide);
+    text-transform: uppercase;
+    color: var(--oelt-color-ink-soft);
+    margin-bottom: var(--oelt-space-xs);
+  }
+
+  .chat-panel__bubble {
+    margin: 0;
+    font-size: var(--oelt-text-base);
+  }
+
+  .hero__arrow {
+    font-family: var(--oelt-font-display);
+    font-size: var(--oelt-text-2xl);
+    color: var(--oelt-color-accent);
+    padding-inline: var(--oelt-space-md);
+  }
+
+  .track-panel {
+    justify-self: stretch;
+  }
+
+  .track-panel pre {
+    padding: var(--oelt-space-lg);
+    font-size: var(--oelt-text-sm);
+  }
+
+  .track-ok {
+    color: var(--oelt-color-code-accent);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .track-line {
+      display: inline-block;
+      animation: oelt-rise var(--oelt-duration-slow) var(--oelt-ease) both;
+    }
+
+    .track-line:nth-child(2) {
+      animation-delay: 600ms;
+    }
+
+    .track-line:nth-child(3) {
+      animation-delay: 1200ms;
+    }
+  }
+
+  .hero__caption {
+    font-size: var(--oelt-text-xs);
+    color: var(--oelt-color-ink-soft);
+  }
+
+  .problem__quote {
+    margin: 0;
+    border-left: var(--oelt-space-2xs) solid var(--oelt-color-accent);
+    padding-left: var(--oelt-space-lg);
+    font-size: var(--oelt-text-lg);
+    max-width: var(--oelt-measure);
+  }
+
+  .steps {
+    display: grid;
+    gap: var(--oelt-space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    list-style: none;
+    margin: 0 0 var(--oelt-space-lg);
+    padding: 0;
+    counter-reset: step;
+  }
+
+  .steps__num {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border-radius: var(--oelt-radius-pill);
+    background: var(--oelt-color-accent);
+    color: var(--oelt-color-on-accent);
+    font-size: var(--oelt-text-base);
+    margin-right: var(--oelt-space-xs);
+  }
+
+  .cta-band {
+    background: var(--oelt-color-code-bg);
+    color: var(--oelt-color-code-ink);
+    text-align: center;
+  }
+
+  .cta-band h2,
+  .cta-band p {
+    max-width: none;
+  }
+
+  .cta-band__sub a {
+    color: var(--oelt-color-code-accent);
+  }
+</style>

@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
+---
+
+<BaseLayout
+  title="How it works"
+  description="The contract idea: the LLM writes the creative layer, OELTKit provides the manifest, runtime, components, validation, and packager around it."
+  path="/how-it-works/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">How it works</span>
+      <h1>The LLM writes the course. The toolkit signs the contract.</h1>
+      <p class="lede">
+        The creative layer is free-form HTML — whatever your AI assistant dreams up. OELTKit
+        provides everything around it: the manifest that declares what the course is, the runtime
+        that talks to your LMS, the components that make interactions accessible, and the packager
+        that ships it. The LLM never has to get the plumbing right, because the plumbing isn't its
+        job.
+      </p>
+
+      <ol class="arch" aria-label="Architecture: from your content to a shippable package">
+        <li class="arch__box">
+          <h2 class="arch__title">Your content</h2>
+          <p>Free-form HTML and media, written by your AI assistant. The bespoke part stays bespoke.</p>
+        </li>
+        <li class="arch__box">
+          <h2 class="arch__title">Components &amp; runtime</h2>
+          <p>Accessible interaction components and one tracking API that speaks every LMS dialect.</p>
+        </li>
+        <li class="arch__box">
+          <h2 class="arch__title">Validation</h2>
+          <p>Accessibility, tracking, and packaging checks — findings the AI can read and fix itself.</p>
+        </li>
+        <li class="arch__box">
+          <h2 class="arch__title">Package</h2>
+          <p>A SCORM 1.2, SCORM 2004, or cmi5 zip that imports into the LMS you already have.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--rule">
+    <div class="container">
+      <span class="eyebrow">Walkthrough</span>
+      <h2>The real artifacts, start to finish</h2>
+      <p>
+        This walkthrough shows the actual files at each step — the manifest, a content page, the
+        validator's output (including a caught error), and the package landing in an LMS.
+      </p>
+
+      <div class="todo-note" role="note">
+        <p>
+          <strong>TODO — artifacts pending:</strong> the example <code>course.json</code> (Option C
+          shape), the <code>&lt;oelt-branching&gt;</code> page markup, real
+          <code>oelt validate</code> output, and the LMS import screenshot come from the toolkit
+          repo (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>) once the specs
+          freeze. Placeholders below are structural — nothing here is invented API.
+        </p>
+      </div>
+
+      <div class="walkthrough">
+        <section class="walkthrough__step">
+          <h3>1 · The manifest: <code>course.json</code></h3>
+          <p>
+            One declarative file: title, structure, completion rules, score weighting. Declared,
+            not hand-wired — the runtime enforces it on every LMS target.
+          </p>
+          <div class="code-panel">
+            <p class="code-panel__bar">course.json</p>
+            <pre><code>// TODO: real Option C-shape manifest from the main-repo spec
+// (oeltkit/oeltkit — manifest specification)</code></pre>
+          </div>
+        </section>
+
+        <section class="walkthrough__step">
+          <h3>2 · A content page with a branching scenario</h3>
+          <p>
+            Plain HTML the LLM wrote, with an <code>&lt;oelt-branching&gt;</code> element where the
+            decision point goes. No build step, no framework.
+          </p>
+          <div class="code-panel">
+            <p class="code-panel__bar">lesson-2.html</p>
+            <pre><code>&lt;!-- TODO: real page markup with &lt;oelt-branching&gt; from the
+     component spec (oeltkit/oeltkit — component reference) --&gt;</code></pre>
+          </div>
+        </section>
+
+        <section class="walkthrough__step">
+          <h3>3 · Validation — including the part where it catches a mistake</h3>
+          <p>
+            The validator checks accessibility, tracking wiring, and package structure, and reports
+            findings in a format the AI can act on. Honesty matters here: it will catch things, and
+            that's the point.
+          </p>
+          <div class="code-panel">
+            <p class="code-panel__bar">oelt validate · output</p>
+            <pre><code># TODO: real validator output (with a genuine caught error)
+# from the main-repo validation spec</code></pre>
+          </div>
+        </section>
+
+        <section class="walkthrough__step">
+          <h3>4 · The package, imported</h3>
+          <p>
+            <code>oelt package</code> produces a zip; the LMS sees a standards-compliant course. A
+            screenshot of a real import lands here once the first verification run is done.
+          </p>
+          <div class="code-panel">
+            <p class="code-panel__bar">LMS import</p>
+            <pre><code># TODO: screenshot of the packaged zip imported into SCORM Cloud
+# (first verification target)</code></pre>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--rule">
+    <div class="container">
+      <span class="eyebrow">For developers</span>
+      <h2>Want the long version?</h2>
+      <ul>
+        <li>
+          <a href={withBase('/docs/')}>Architecture docs</a> — the full layer model behind the
+          4-box picture above.
+        </li>
+        <li>
+          <a href={withBase('/docs/tracking-guide/')}>Runtime &amp; tracking API</a> — how
+          <code>oelt.track</code> maps to SCORM 1.2, SCORM 2004, and cmi5.
+        </li>
+        <li>
+          <a href={withBase('/docs/mcp-setup/')}>MCP server &amp; tool list</a> — connect OELTKit
+          to Claude Desktop, Cowork, or Claude Code.
+        </li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lede {
+    font-size: var(--oelt-text-lg);
+    color: var(--oelt-color-ink-soft);
+  }
+
+  .arch {
+    display: grid;
+    gap: var(--oelt-space-md);
+    grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+    list-style: none;
+    counter-reset: arch;
+    margin: var(--oelt-space-xl) 0 0;
+    padding: 0;
+  }
+
+  .arch__box {
+    counter-increment: arch;
+    position: relative;
+    background: var(--oelt-color-surface);
+    border: var(--oelt-border-w-bold) solid var(--oelt-color-line-strong);
+    border-radius: var(--oelt-radius-md);
+    padding: var(--oelt-space-lg);
+  }
+
+  .arch__box::before {
+    content: counter(arch, decimal-leading-zero);
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-xs);
+    color: var(--oelt-color-accent);
+  }
+
+  .arch__box:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    inset-inline-end: calc(-1 * var(--oelt-space-md));
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    color: var(--oelt-color-accent);
+    font-family: var(--oelt-font-display);
+    z-index: 1;
+  }
+
+  .arch__title {
+    font-size: var(--oelt-text-lg);
+    margin: var(--oelt-space-2xs) 0 var(--oelt-space-xs);
+  }
+
+  .arch__box p {
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
+    margin: 0;
+  }
+
+  .walkthrough {
+    display: grid;
+    gap: var(--oelt-space-xl);
+    margin-top: var(--oelt-space-xl);
+  }
+
+  .walkthrough__step h3 {
+    margin-bottom: var(--oelt-space-xs);
+  }
+
+  .walkthrough .code-panel {
+    max-width: var(--oelt-content-width);
+  }
+
+  .walkthrough pre {
+    padding: var(--oelt-space-lg);
+    font-size: var(--oelt-text-sm);
+  }
+</style>

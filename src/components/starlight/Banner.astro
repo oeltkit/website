@@ -1,0 +1,12 @@
+---
+/**
+ * Starlight `Banner` override: always renders the site-wide beta banner,
+ * then any per-page banner content from frontmatter (Starlight's default
+ * behavior).
+ */
+import Default from '@astrojs/starlight/components/Banner.astro';
+import BetaBanner from '../BetaBanner.astro';
+---
+
+<BetaBanner />
+<Default><slot /></Default>

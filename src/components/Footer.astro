@@ -1,0 +1,62 @@
+---
+/**
+ * Global footer: GitHub / npm / license / a11y conformance statement /
+ * BCL credit / llms.txt link — per SITE-STRUCTURE.md.
+ */
+import { GITHUB_REPO_URL, NPM_URL } from '../config/site';
+import { withBase } from '../lib/url';
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href={GITHUB_REPO_URL}>GitHub</a></li>
+        <li><a href={NPM_URL}>npm</a></li>
+        <li><a href={`${GITHUB_REPO_URL}/blob/main/LICENSE`}>Apache 2.0 license</a></li>
+        <li><a href={withBase('/standards/#accessibility')}>Accessibility conformance</a></li>
+        <li><a href={withBase('/llms.txt')}>llms.txt</a></li>
+      </ul>
+    </nav>
+    <p class="footer__credit">
+      Open source, incubated by <a href="https://www.bcltraining.com">BCL Training</a>. Works with
+      any LMS and any AI assistant — and always will.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: var(--oelt-border-w) solid var(--oelt-color-line);
+    background: var(--oelt-color-surface);
+    padding-block: var(--oelt-space-xl);
+    margin-top: var(--oelt-space-3xl);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--oelt-space-lg);
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .footer ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--oelt-space-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer a {
+    font-size: var(--oelt-text-sm);
+  }
+
+  .footer__credit {
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  // Drafts are excluded in production but render in dev for preview.
+  const posts = await getCollection(
+    'blog',
+    ({ data }) => import.meta.env.DEV || !data.draft
+  );
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const formatter = new Intl.DateTimeFormat('en', { dateStyle: 'long' });
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  path={`/blog/${post.id}/`}
+>
+  <article class="section">
+    <div class="container">
+      <header class="post-header">
+        <span class="eyebrow">Blog</span>
+        <h1>{post.data.title}</h1>
+        <p class="post-header__meta">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formatter.format(post.data.pubDate)}
+          </time>
+          · {post.data.author}
+          {post.data.draft && <span class="post-header__draft">Draft</span>}
+        </p>
+      </header>
+      <div class="post-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header__meta {
+    color: var(--oelt-color-ink-soft);
+    font-size: var(--oelt-text-sm);
+  }
+
+  .post-header__draft {
+    background: var(--oelt-color-warn-bg);
+    color: var(--oelt-color-warn-ink);
+    border: var(--oelt-border-w) solid var(--oelt-color-warn-line);
+    border-radius: var(--oelt-radius-pill);
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--oelt-tracking-wide);
+    padding: 0.1rem 0.6rem;
+    margin-left: var(--oelt-space-xs);
+  }
+
+  .post-body :global(h2) {
+    margin-top: var(--oelt-space-xl);
+  }
+</style>

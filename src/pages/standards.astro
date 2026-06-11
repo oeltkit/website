@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Standards"
+  description="What OELTKit means by standards-based: SCORM 1.2, SCORM 2004, cmi5/xAPI, and standalone web targets; a WCAG 2.2 AA commitment with per-component conformance; and a no-phone-home data posture."
+  path="/standards/"
+>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">Standards</span>
+      <h1>For whoever has to defend this choice</h1>
+      <p class="lede">
+        At some point IT, legal, or procurement will ask what this thing actually is. This page is
+        the answer: which standards OELTKit packages target, what the accessibility commitment
+        means concretely, and exactly where learner data goes (spoiler: to your LMS, and nowhere
+        else).
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--rule" id="lms-interoperability">
+    <div class="container">
+      <h2>LMS interoperability</h2>
+      <p>
+        Every OELTKit course can be packaged for four targets from the same source. You pick the
+        target; the content doesn't change.
+      </p>
+      <dl class="targets">
+        <div class="targets__item">
+          <dt>SCORM 1.2</dt>
+          <dd>
+            The lowest common denominator — and still the safest bet for older corporate LMSes. If
+            you don't know what your LMS supports, it supports this.
+          </dd>
+        </div>
+        <div class="targets__item">
+          <dt>SCORM 2004</dt>
+          <dd>
+            Richer status reporting than 1.2 (separate completion and success). Choose it when your
+            LMS supports it and you care about that distinction.
+          </dd>
+        </div>
+        <div class="targets__item">
+          <dt>cmi5 / xAPI</dt>
+          <dd>
+            The modern standard: granular statements to an LRS, courses that can live outside the
+            LMS. Choose it if your platform is recent or you run an LRS.
+          </dd>
+        </div>
+        <div class="targets__item">
+          <dt>Standalone web</dt>
+          <dd>
+            No LMS at all — the same course runs on any static host. Tracking calls no-op safely or
+            log locally. Good for previews, portfolios, and public courses.
+          </dd>
+        </div>
+      </dl>
+
+      <h3 id="verified-on">Verified on</h3>
+      <p>
+        This list only ever contains platforms where the full conformance test suite has actually
+        been run — that's a launch rule, not a disclaimer.
+      </p>
+      <ul class="verified">
+        <li class="verified__empty">
+          No entries yet. SCORM Cloud is the first verification target; real LMSes follow as
+          they're tested. Until a platform appears here, we make no claim about it.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--rule" id="accessibility">
+    <div class="container">
+      <h2>Accessibility</h2>
+      <p>
+        OELTKit components are built to <strong>WCAG 2.2 AA</strong> — keyboard operability, visible
+        focus, screen-reader tested behavior, and reduced-motion support are construction
+        requirements, not an audit afterthought. The validator checks the content layer (the part
+        your AI writes) so generated courses don't undo that work.
+      </p>
+
+      <h3>Per-component conformance</h3>
+      <div class="todo-note" role="note">
+        <p>
+          <strong>TODO:</strong> the per-component conformance table is auto-generated from test
+          results in <a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a> and lands
+          here with the first component release — it is not hand-maintained, by design.
+        </p>
+      </div>
+
+      <h3>Regulatory mapping</h3>
+      <p>
+        WCAG 2.2 AA conformance is the basis for <strong>Section 508</strong> (US) and
+        <strong>EN 301 549</strong> (EU) compliance claims. A conformance statement template you
+        can adapt for procurement paperwork ships alongside the conformance table.
+      </p>
+      <div class="todo-note" role="note">
+        <p>
+          <strong>TODO:</strong> conformance statement template download pending the first
+          published test run.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--rule" id="data">
+    <div class="container">
+      <h2>Data</h2>
+      <ul>
+        <li>
+          <strong>What's tracked:</strong> what you declare in the course manifest — progress,
+          scores, completion, and (on cmi5/xAPI) the statements your components emit. Nothing else.
+        </li>
+        <li>
+          <strong>Where it goes:</strong> to your LMS or LRS, over the standard API for the target
+          you packaged. That's the whole list.
+        </li>
+        <li>
+          <strong>No phone-home:</strong> OELTKit courses make no requests to OELTKit, BCL
+          Training, or any third party. No analytics, no beacons, no CDN dependencies at runtime.
+        </li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lede {
+    font-size: var(--oelt-text-lg);
+    color: var(--oelt-color-ink-soft);
+  }
+
+  .targets {
+    display: grid;
+    gap: var(--oelt-space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    margin: var(--oelt-space-xl) 0;
+  }
+
+  .targets__item {
+    background: var(--oelt-color-surface);
+    border: var(--oelt-border-w) solid var(--oelt-color-line);
+    border-radius: var(--oelt-radius-md);
+    padding: var(--oelt-space-lg);
+  }
+
+  .targets dt {
+    font-family: var(--oelt-font-display);
+    font-weight: 700;
+    font-size: var(--oelt-text-lg);
+    margin-bottom: var(--oelt-space-xs);
+  }
+
+  .targets dd {
+    margin: 0;
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
+  }
+
+  .verified {
+    list-style: none;
+    padding: 0;
+  }
+
+  .verified__empty {
+    border: var(--oelt-border-w-bold) dashed var(--oelt-color-line-strong);
+    border-radius: var(--oelt-radius-md);
+    padding: var(--oelt-space-lg);
+    color: var(--oelt-color-ink-soft);
+    max-width: var(--oelt-measure);
+  }
+
+  .todo-note {
+    max-width: var(--oelt-measure);
+    margin-block: var(--oelt-space-md);
+  }
+</style>

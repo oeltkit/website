@@ -1,0 +1,41 @@
+---
+/** Wordmark + check mark. The check is the brand: "makes it count". */
+---
+
+<span class="logo">
+  <svg
+    class="logo__mark"
+    width="28"
+    height="28"
+    viewBox="0 0 28 28"
+    aria-hidden="true"
+    fill="none"
+  >
+    <rect x="1.5" y="1.5" width="25" height="25" rx="6.5" stroke="currentColor" stroke-width="3" />
+    <path
+      d="M8 14.5l4 4 8-9"
+      stroke="var(--oelt-color-accent)"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+  <span class="logo__word">OELTKit</span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--oelt-space-xs);
+    font-family: var(--oelt-font-display);
+    font-weight: 700;
+    font-size: var(--oelt-text-lg);
+    letter-spacing: var(--oelt-tracking-tight);
+    color: var(--oelt-color-ink);
+  }
+
+  .logo__mark {
+    flex: none;
+  }
+</style>
