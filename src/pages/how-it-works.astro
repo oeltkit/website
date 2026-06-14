@@ -52,11 +52,11 @@ import { withBase } from '../lib/url';
 
       <div class="todo-note" role="note">
         <p>
-          <strong>TODO — artifacts pending:</strong> the example <code>course.json</code> (Option C
-          shape), the <code>&lt;oelt-branching&gt;</code> page markup, real
-          <code>oelt validate</code> output, and the LMS import screenshot come from the toolkit
-          repo (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>) once the specs
-          freeze. Placeholders below are structural — nothing here is invented API.
+          The manifest and page markup below use the real schema and component markup from the
+          toolkit specs (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>); the
+          validator output shows the actual <code>oelt validate --json</code> finding format. The
+          one remaining placeholder is the LMS import screenshot, captured once a packaged course is
+          imported into SCORM Cloud.
         </p>
       </div>
 
@@ -69,8 +69,24 @@ import { withBase } from '../lib/url';
           </p>
           <div class="code-panel">
             <p class="code-panel__bar">course.json</p>
-            <pre><code>// TODO: real Option C-shape manifest from the main-repo spec
-// (oeltkit/oeltkit — manifest specification)</code></pre>
+            <pre tabindex="0"><code>{`{
+  "oelt": "0.1",
+  "id": "com.example.data-privacy",
+  "title": "Data Privacy Essentials",
+  "lang": "en",
+  "targets": ["scorm12", "scorm2004", "cmi5", "web"],
+  "tracking": {
+    "completion": { "rule": "required-interactions-passed" },
+    "score": { "rule": "weighted-interactions", "mastery": 0.8 }
+  },
+  "structure": [
+    { "id": "m1", "title": "Foundations", "pages": [
+      { "id": "intro", "title": "Why privacy matters", "src": "pages/intro.html" },
+      { "id": "quiz", "title": "Final quiz", "src": "pages/quiz.html",
+        "interactions": [{ "id": "final-quiz", "type": "quiz", "required": true }] }
+    ] }
+  ]
+}`}</code></pre>
           </div>
         </section>
 
@@ -82,8 +98,26 @@ import { withBase } from '../lib/url';
           </p>
           <div class="code-panel">
             <p class="code-panel__bar">lesson-2.html</p>
-            <pre><code>&lt;!-- TODO: real page markup with &lt;oelt-branching&gt; from the
-     component spec (oeltkit/oeltkit — component reference) --&gt;</code></pre>
+            <pre tabindex="0"><code>{`<section>
+  <h1>Spot the phishing attempt</h1>
+  <oelt-branching id="phish" start="n1">
+    <script type="application/json">
+      {
+        "nodes": {
+          "n1": {
+            "text": "<p>An email asks you to reset your password via a link. You…</p>",
+            "choices": [
+              { "label": "Click the link", "to": "bad", "value": "click" },
+              { "label": "Open the site yourself", "to": "good", "value": "direct" }
+            ]
+          },
+          "good": { "text": "<p>Right — navigate there directly.</p>", "end": "passed" },
+          "bad":  { "text": "<p>That link could be spoofed.</p>", "choices": [{ "label": "Try again", "to": "n1", "value": "retry" }] }
+        }
+      }
+    </script>
+  </oelt-branching>
+</section>`}</code></pre>
           </div>
         </section>
 
@@ -96,9 +130,24 @@ import { withBase } from '../lib/url';
           </p>
           <div class="code-panel">
             <p class="code-panel__bar">oelt validate · output</p>
-            <pre><code># TODO: real validator output (with a genuine caught error)
-# from the main-repo validation spec</code></pre>
+            <pre tabindex="0"><code>{`$ oelt validate ./data-privacy --json
+{
+  "ok": false,
+  "findings": [
+    {
+      "level": "error",
+      "code": "interaction-missing-in-html",
+      "message": "Declared interaction 'final-quiz' not found in page HTML.",
+      "where": "module m1, page \\"Final quiz\\" (pages/quiz.html)",
+      "message_human": "The page \\"Final quiz\\" declares an interaction \\"final-quiz\\", but pages/quiz.html has no element with that id. Add an element like <oelt-quiz id=\\"final-quiz\\">, or remove it from the manifest."
+    }
+  ]
+}`}</code></pre>
           </div>
+          <p class="walkthrough__note">
+            Every finding carries a <code>message_human</code> sentence that names the page by
+            title — so an AI assistant can read it and fix its own output, then re-validate.
+          </p>
         </section>
 
         <section class="walkthrough__step">
@@ -109,7 +158,7 @@ import { withBase } from '../lib/url';
           </p>
           <div class="code-panel">
             <p class="code-panel__bar">LMS import</p>
-            <pre><code># TODO: screenshot of the packaged zip imported into SCORM Cloud
+            <pre tabindex="0"><code># TODO: screenshot of the packaged zip imported into SCORM Cloud
 # (first verification target)</code></pre>
           </div>
         </section>
@@ -132,7 +181,11 @@ import { withBase } from '../lib/url';
         </li>
         <li>
           <a href={withBase('/docs/mcp-setup/')}>MCP server &amp; tool list</a> — connect OELTKit
-          to Claude Desktop, Cowork, or Claude Code.
+          to Claude Desktop, Claude Code, or any stdio MCP host.
+        </li>
+        <li>
+          <a href={withBase('/docs/authoring-guide/')}>Authoring guide</a> — the manifest shape and
+          how the content layer, components, and tracking fit together.
         </li>
       </ul>
     </div>
@@ -201,6 +254,13 @@ import { withBase } from '../lib/url';
 
   .walkthrough__step h3 {
     margin-bottom: var(--oelt-space-xs);
+  }
+
+  .walkthrough__note {
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
+    margin-top: var(--oelt-space-sm);
+    max-width: var(--oelt-content-width);
   }
 
   .walkthrough .code-panel {

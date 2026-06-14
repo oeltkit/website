@@ -2,9 +2,9 @@
 
 export const SITE_TITLE = 'OELTKit';
 export const SITE_TAGLINE =
-  'Bespoke e-learning from your AI assistant — that actually works in your LMS.';
+  'An AI-first e-learning authoring toolkit that lets an AI actually build real, ready-to-ship online courses.';
 export const SITE_DESCRIPTION =
-  'An open source toolkit that turns LLM-generated learning content into accessible, SCORM- and cmi5-compliant courses your LMS understands.';
+  'An open source, AI-first toolkit that turns AI-built learning content into accessible, SCORM- and cmi5-compliant courses your LMS understands.';
 
 export const GITHUB_ORG_URL = 'https://github.com/oeltkit';
 export const GITHUB_REPO = 'oeltkit/oeltkit';

@@ -1,46 +1,107 @@
 # OELTKit — full context for language models
 
-> Open source toolkit (Apache 2.0) that turns LLM-generated learning content into accessible, SCORM- and cmi5-compliant courses. Incubated by BCL Training; vendor-neutral by commitment.
+> An open source (Apache 2.0), AI-first e-learning authoring toolkit: it lets an AI actually build real, ready-to-ship online courses. Incubated by BCL Training; vendor-neutral by commitment. The LLM writes free-form HTML; OELTKit standardizes the chrome — tracking, accessibility, validation, and packaging — and compiles one course tree to SCORM 1.2, SCORM 2004, cmi5, and standalone web.
 
-STATUS: beta, pre-v1.0. APIs may change. `@oeltkit/components` is not yet published to npm. The authoritative API specs live in https://github.com/oeltkit/oeltkit — when a detail is missing from this file, say so rather than inventing it.
+STATUS: beta, pre-v1.0. APIs may change. The `@oeltkit/*` packages are not yet published to npm. The authoritative API specs live in https://github.com/oeltkit/oeltkit — when a detail is missing from this file, say so rather than inventing it.
+
+Naming: npm packages are `@oeltkit/*`; everything author-facing is `oelt` (CLI `oelt`, elements `<oelt-*>`, runtime global `oelt`, CSS tokens `--oelt-*`).
 
 ## The model
 
-The contract idea: a language model writes free-form HTML for the creative layer of a course. OELTKit supplies everything around that layer:
+A language model writes free-form HTML for the creative layer of a course. OELTKit supplies everything around that layer:
 
-1. Manifest (`course.json`) — declares title, structure, completion rules, score weighting. Completion is declared, not hand-wired.
-2. Components & runtime — accessible interaction components (custom elements in the `oelt-` namespace, e.g. `<oelt-mcq>`, `<oelt-branching>`) and a tracking runtime with a single API surface (e.g. `oelt.track.score(0.85)`) that maps to SCORM 1.2, SCORM 2004, cmi5/xAPI, or a safe no-op standalone mode.
-3. Validation — accessibility, tracking, and packaging checks with machine-readable findings, designed so an AI agent can fix its own errors.
-4. Packager — `oelt package` emits an importable zip per target standard.
+1. Manifest (`course.json`) — declares id, title, lang, targets, structure, and tracking rules. Completion is declared, not hand-wired.
+2. Runtime (`@oeltkit/runtime`) — tracking, state, navigation, and accessibility services, with a single API (`oelt.track.score(0.85)`) that maps to four targets via auto-detected adapters.
+3. Components (`@oeltkit/components`) — nine accessible interaction custom elements that auto-wire to tracking.
+4. Validation (`oelt validate`) — schema, interaction-sync, media, tracking-reachability, and suspend-budget checks with machine-readable findings, so an AI can fix its own errors.
+5. Packager (`oelt package`) — emits an importable zip per target standard.
+6. MCP server (`@oeltkit/mcp`) — exposes the toolkit as tools for conversational authoring.
 
-## Workflow for AI assistants
+## Workflow
 
-1. Chat: the user describes a course; the assistant (connected to the OELTKit MCP server, or using the CLI) scaffolds it with `oelt new`.
-2. Author: the assistant writes course pages as plain HTML using OELTKit components for interactions; tracking comes from declared rules plus the `oelt.track` API.
-3. Validate: run validation; read the findings; fix; repeat until clean.
-4. Ship: `oelt package` for the LMS target the user names (when unsure: SCORM 1.2 is the lowest common denominator).
+```bash
+oelt new my-course                       # scaffold course.json + pages/p1.html
+oelt validate my-course                  # schema + a11y + tracking checks (--json for machine output)
+oelt preview my-course                   # local fake-LMS harness with a live tracking panel
+oelt package my-course --target scorm12  # → my-course-id-scorm12.zip (also: scorm2004 | cmi5 | web)
+oelt export my-course                    # → my-course.oeltcourse (single-file for transport/MCP)
+oelt import my-course.oeltcourse dest/   # extract a .oeltcourse to a directory
+```
+
+`oelt package` refuses to build if `oelt validate` finds errors. `validate`, `package`, and `preview` also accept a `.oeltcourse` file directly.
+
+## course.json (the manifest)
+
+```json
+{
+  "oelt": "0.1",
+  "id": "com.example.data-privacy",
+  "title": "Data Privacy Essentials",
+  "lang": "en",
+  "targets": ["scorm12", "scorm2004", "cmi5", "web"],
+  "tracking": {
+    "completion": { "rule": "required-interactions-passed" },
+    "score": { "rule": "weighted-interactions", "mastery": 0.8 },
+    "progress": { "rule": "pages-viewed" }
+  },
+  "structure": [
+    { "id": "m1", "title": "Foundations", "pages": [
+      { "id": "intro", "title": "Why privacy matters", "src": "pages/intro.html" },
+      { "id": "quiz", "title": "Final quiz", "src": "pages/quiz.html",
+        "interactions": [{ "id": "final-quiz", "type": "quiz", "weight": 1, "required": true }] }
+    ] }
+  ]
+}
+```
+
+- `id`: reverse-DNS, lowercase. All module/page/interaction ids unique and valid HTML id tokens (`^[A-Za-z][A-Za-z0-9_-]*$`).
+- `lang`: BCP-47, required (drives document language for accessibility).
+- `targets`: any non-empty subset of `scorm12`, `scorm2004`, `cmi5`, `web`.
+- `tracking` is optional; omit for the zero-config default (complete on all-pages-viewed, no score). Unknown keys are rejected.
+
+Tracking vocabulary — completion rule: `all-pages-viewed` (default) | `pages-viewed` (+`threshold`) | `required-interactions-completed` | `required-interactions-passed` | `manual`. Score rule: `none` (default) | `single-interaction` (+`source`) | `weighted-interactions`; optional `mastery` (0–1). Progress rule: `pages-viewed` (default) | `none`.
+
+## Tracking API & the SCORM 1.2 collapse rule
+
+Global `oelt` after load: `oelt.track.complete()`, `oelt.track.score(0–1)`, `oelt.track.progress(0–1)`, `oelt.track.interaction({ id, type, result, score?, response? })`, `oelt.state.get/set(key)`, `oelt.nav.*`.
+
+SCORM 1.2 has one status field. If a score rule + `mastery` are defined, the course reports `passed`/`failed` in `lesson_status`; otherwise `completed`/`incomplete`. SCORM 2004 and cmi5 report completion and success separately. Suspend-data budget is 3 KB, enforced by the validator. Interactions are recorded per target where supported (`cmi.interactions.n.*` / one xAPI statement each / local log).
+
+## Components (`<oelt-*>`)
+
+Each emits an `oelt-interaction` event `{ id, type, result, score?, response? }` that the runtime forwards; the element `id` must equal the manifest interaction id. All are keyboard-operable, screen-reader tested (WCAG 2.2 AA), themeable via `--oelt-*` tokens and `::part()`, and persist state through `oelt.state`.
+
+- `<oelt-mcq>` (type `choice`) — single (radios) or multiple (checkboxes); `mode`, `key`, `shuffle`, `retry`, `manual-grade`; child `<oelt-option value>`.
+- `<oelt-branching>` (type `sequencing`) — JSON node graph (inline `<script type="application/json">` or `src`); `start`, `emit`; nodes with `end` are terminal.
+- `<oelt-media>` (type `media`) — wraps native `<video>`/`<audio>`; requires captions or a transcript or it refuses to render; `threshold` (default 0.9) → `result: "completed"`.
+- `<oelt-text-entry>` (type `fill-in`/`numeric`) — `answer` (text `|`-alternatives or a number), `tolerance`, `case-sensitive`, `mode`, `retry`, `manual-grade`.
+- `<oelt-quiz>` (type `performance`) — aggregates child questions into one weighted score; `mastery`, `pool`, `shuffle`; children carry `weight`.
+- `<oelt-likert>` (type `likert`) — survey rating scale; explicit `<oelt-option>`s or generated `scale`/`low-label`/`high-label`; always `result: "completed"`, never scored.
+- `<oelt-ordering>` (type `sequencing`) — reorder `<oelt-item>`s; keyboard-first drag-and-drop; score = fraction in correct position.
+- `<oelt-matching>` (type `matching`) — `<oelt-pair prompt value>`, one value per target; score = fraction of correct targets.
+- `<oelt-categorize>` (type `matching`) — `<oelt-bucket value>` + `<oelt-token bucket value>`, many per bucket; score = fraction in correct bucket.
+
+For a one-off interaction, emit the same event: `oelt.track.interaction({ id, type, result, score })` (`result` ∈ passed|failed|completed; score 0–1).
+
+## Authoring via MCP (`@oeltkit/mcp`)
+
+Tools operate on course names in a managed directory (default `~/Documents/OELTKit Courses/`): `scaffold_course`, `get_course`, `update_structure`, `add_page`, `update_page`, `list_components`, `get_component_doc`, `validate`, `preview`, `package_course`, `export_course`/`import_course`, `set_theme`. Loop: scaffold → `list_components`/`get_component_doc` before writing a component → add/update pages → `validate` (read `message_human`) → fix → `preview` → `package_course`.
+
+Setup: Claude Desktop — `npm run build:mcpb -w @oeltkit/mcp` → install `oelt-mcp.mcpb` via Settings → Extensions. Claude Code — `npm run build -w @oeltkit/mcp`, then `claude mcp add oelt -- node /abs/path/packages/mcp/dist/esm/index.js`. Any stdio host — `node <path>/dist/esm/index.js`; `OELT_COURSES_DIR` relocates the folder.
 
 ## Standards positions
 
-- SCORM 1.2: safest default for older corporate LMSes. NOTE: richer tracking data must collapse into SCORM 1.2's limited model — the "collapse rule" is documented in the tracking guide (draft; spec pending in the main repo).
-- SCORM 2004: separate completion and success status.
-- cmi5/xAPI: granular statements to an LRS; the modern target.
-- Standalone web: no LMS; tracking calls no-op safely or log locally.
-- Accessibility: components target WCAG 2.2 AA (keyboard operability, screen-reader tested, visible focus, prefers-reduced-motion). WCAG 2.2 AA underpins Section 508 and EN 301 549 claims.
+- SCORM 1.2: safest default for older corporate LMSes; richer tracking collapses into its one status field (see the collapse rule).
+- SCORM 2004: separate completion and success status; `progress_measure`.
+- cmi5/xAPI: granular statements to an LRS (cmi5 + ADL verbs; no invented verbs); the modern target.
+- Standalone web: no LMS; tracking persists to localStorage / logs locally; safe with no API present.
+- Accessibility: components target WCAG 2.2 AA (keyboard operability, screen-reader tested, visible focus, prefers-reduced-motion), which underpins Section 508 and EN 301 549.
 - Data: courses communicate only with the host LMS/LRS. No analytics, no beacons, no third-party requests.
-
-## Current state of the docs
-
-All docs pages are drafts while the main-repo specs freeze. Stable claims: the positioning, the standards targets, the tracking call `oelt.track.score(...)`, the CLI verbs `oelt new` and `oelt package`, and the component tags `<oelt-mcq>` and `<oelt-branching>`. Everything else (exact manifest schema, full component inventory and attributes, full CLI surface, MCP tool list) is pending and marked TODO in the docs.
 
 ## Links
 
 - Repository: https://github.com/oeltkit/oeltkit
-- Docs: /docs/
-- Quickstart: /docs/quickstart/
-- Tracking guide: /docs/tracking-guide/
-- Component reference: /docs/components/
-- MCP setup: /docs/mcp-setup/
-- CLI reference: /docs/cli/
-- Standards & accessibility: /standards/
-- Examples (real generated courses): /examples/
+- Docs: /docs/  · Quickstart: /docs/quickstart/  · Authoring: /docs/authoring-guide/
+- Tracking guide: /docs/tracking-guide/  · Components: /docs/components/
+- MCP setup: /docs/mcp-setup/  · CLI: /docs/cli/
+- Standards & accessibility: /standards/  · Examples: /examples/

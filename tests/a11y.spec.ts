@@ -22,6 +22,13 @@ const ROUTES = [
   '/docs/components/',
   '/docs/components/oelt-mcq/',
   '/docs/components/oelt-branching/',
+  '/docs/components/oelt-media/',
+  '/docs/components/oelt-text-entry/',
+  '/docs/components/oelt-quiz/',
+  '/docs/components/oelt-likert/',
+  '/docs/components/oelt-ordering/',
+  '/docs/components/oelt-matching/',
+  '/docs/components/oelt-categorize/',
   '/docs/mcp-setup/',
   '/docs/cli/',
 ];

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
 ---
 
 <BaseLayout
@@ -83,11 +84,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </p>
 
       <h3>Per-component conformance</h3>
+      <p>
+        All nine launch components — <code>&lt;oelt-mcq&gt;</code>, <code>&lt;oelt-branching&gt;</code>,
+        <code>&lt;oelt-media&gt;</code>, <code>&lt;oelt-text-entry&gt;</code>,
+        <code>&lt;oelt-quiz&gt;</code>, <code>&lt;oelt-likert&gt;</code>,
+        <code>&lt;oelt-ordering&gt;</code>, <code>&lt;oelt-matching&gt;</code>, and
+        <code>&lt;oelt-categorize&gt;</code> — ship with Playwright + axe-core tests that run in CI,
+        and are keyboard-operable by construction (see each component's keyboard map in the
+        <a href={withBase('/docs/components/')}>component reference</a>). A manual screen-reader pass
+        (NVDA + VoiceOver) is the gate from <em>beta</em> to <em>stable</em>.
+      </p>
       <div class="todo-note" role="note">
         <p>
-          <strong>TODO:</strong> the per-component conformance table is auto-generated from test
-          results in <a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a> and lands
-          here with the first component release — it is not hand-maintained, by design.
+          <strong>Pending:</strong> the auto-generated per-component conformance table (automated
+          results plus manual-AT status, straight from
+          <a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>) lands here with the v0.1
+          release — it is not hand-maintained, by design.
         </p>
       </div>
 

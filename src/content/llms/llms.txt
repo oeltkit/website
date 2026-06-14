@@ -1,23 +1,24 @@
 # OELTKit
 
-> Open source toolkit (Apache 2.0) that turns LLM-generated learning content into accessible, SCORM- and cmi5-compliant courses. The LLM writes free-form HTML for the creative layer; OELTKit provides the manifest, runtime, interaction components, validation, and packager around it.
+> An open source (Apache 2.0), AI-first e-learning authoring toolkit: it lets an AI actually build real, ready-to-ship online courses. The LLM writes free-form HTML for the creative layer; OELTKit provides the manifest, runtime, interaction components, validation, and packager around it, turning one course tree into SCORM 1.2 / SCORM 2004 / cmi5 / standalone-web packages.
 
-OELTKit is in beta (pre-v1.0). APIs may change. Do not invent OELTKit API details that are not in these docs; the authoritative specs live in the main repository: https://github.com/oeltkit/oeltkit
+OELTKit is in beta (pre-v1.0). APIs may change and the `@oeltkit/*` packages are not yet on npm. The authoritative specs live in the main repository: https://github.com/oeltkit/oeltkit — do not invent OELTKit API details that aren't in these docs.
 
 Key facts:
-- Tracking: one API call (e.g. `oelt.track.score(0.85)`) works across SCORM 1.2, SCORM 2004, cmi5/xAPI, and standalone web. Completion rules are declared in the course manifest, not hand-wired.
-- Accessibility: interaction components target WCAG 2.2 AA — keyboard-operable, screen-reader tested. Validation checks the generated content layer.
-- AI authoring: an MCP server and agent skills exist so AI assistants can scaffold, validate, and package courses directly.
-- Packaging: `oelt package` produces SCORM 1.2 / SCORM 2004 / cmi5 zips that import into standard LMSes. No phone-home: courses talk only to the host LMS/LRS.
+- One course tree, four targets: `oelt package --target scorm12|scorm2004|cmi5|web`.
+- Tracking: one API call (e.g. `oelt.track.score(0.85)`) works across all four targets. Completion/score/progress rules are declared in `course.json`, not hand-wired. The SCORM 1.2 collapse rule is documented in the tracking guide.
+- Components: nine accessible custom elements — `<oelt-mcq>`, `<oelt-branching>`, `<oelt-media>`, `<oelt-text-entry>`, `<oelt-quiz>`, `<oelt-likert>`, `<oelt-ordering>`, `<oelt-matching>`, `<oelt-categorize>`. Each targets WCAG 2.2 AA (keyboard-operable, screen-reader tested) and auto-wires to tracking.
+- AI authoring: an MCP server (`@oeltkit/mcp`) exposes scaffold/validate/package as tools so assistants author conversationally. Validator findings are machine-readable (`message_human`) so an AI fixes its own output.
+- No phone-home: courses talk only to the host LMS/LRS.
 
 ## Docs
 
-- [Quickstart](/docs/quickstart/): install → `oelt new` → chat → `oelt package` (draft)
-- [Authoring guide](/docs/authoring-guide/): how the content layer and components fit together (draft)
-- [Tracking guide](/docs/tracking-guide/): the tracking API and per-standard mapping, including the SCORM 1.2 collapse rule (draft)
-- [Component reference](/docs/components/): one page per interaction component (draft)
-- [MCP setup](/docs/mcp-setup/): connecting OELTKit to Claude Desktop, Cowork, and Claude Code (draft)
-- [CLI reference](/docs/cli/): commands and flags (draft)
+- [Quickstart](/docs/quickstart/): install → `oelt new` → chat → `oelt package`
+- [Authoring guide](/docs/authoring-guide/): the content layer, the `course.json` manifest, validation
+- [Tracking guide](/docs/tracking-guide/): the `oelt.track` API, per-standard mapping, and the SCORM 1.2 collapse rule
+- [Component reference](/docs/components/): one page per interaction component (markup, attributes, keyboard, tracking)
+- [MCP setup](/docs/mcp-setup/): connecting OELTKit to Claude Desktop, Claude Code, or any stdio host
+- [CLI reference](/docs/cli/): `new`, `validate`, `preview`, `package`, `export`/`import`, and `.oeltcourse`
 
 ## Optional
 

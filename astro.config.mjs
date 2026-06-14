@@ -14,16 +14,60 @@ import sitemap from '@astrojs/sitemap';
 const SITE_URL = process.env.SITE_URL ?? 'https://oeltkit.github.io';
 const BASE_PATH = process.env.BASE_PATH ?? '/';
 
+/**
+ * Expressive Code plugin: make every code block's <pre> keyboard-focusable.
+ * Code blocks that overflow horizontally become scrollable regions, and axe's
+ * `scrollable-region-focusable` rule requires those to be reachable by keyboard
+ * (tabindex), so keyboard users can scroll them. Harmless on non-scrolling
+ * blocks. Keeps the docs axe-clean as code samples grow.
+ */
+function preFocusablePlugin() {
+  const setTabindex = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'element' && node.tagName === 'pre') {
+      node.properties = node.properties || {};
+      node.properties.tabIndex = 0;
+    }
+    if (Array.isArray(node.children)) node.children.forEach(setTabindex);
+  };
+  return {
+    name: 'pre-focusable',
+    hooks: {
+      postprocessRenderedBlock: ({ renderData }) => setTabindex(renderData.blockAst),
+    },
+  };
+}
+
+/**
+ * Rehype plugin: same idea as preFocusablePlugin, but for markdown <table>s.
+ * Wide tables (e.g. the per-target mapping tables) overflow horizontally and
+ * become scrollable regions, so they need a tabindex for keyboard scroll access
+ * to stay axe-clean. Harmless on tables that don't overflow.
+ */
+function rehypeFocusableTables() {
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'element' && node.tagName === 'table') {
+      node.properties = node.properties || {};
+      node.properties.tabIndex = 0;
+    }
+    if (Array.isArray(node.children)) node.children.forEach(walk);
+  };
+  return (tree) => walk(tree);
+}
+
 export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
   output: 'static',
   trailingSlash: 'ignore',
+  markdown: { rehypePlugins: [rehypeFocusableTables] },
   integrations: [
     starlight({
       title: 'OELTKit',
       description:
-        'Open source toolkit that turns LLM-generated learning content into accessible, SCORM- and cmi5-compliant courses.',
+        'Open source toolkit that turns AI-built learning content into accessible, SCORM- and cmi5-compliant courses.',
+      expressiveCode: { plugins: [preFocusablePlugin()] },
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/oeltkit/oeltkit' },
       ],
@@ -37,19 +81,26 @@ export default defineConfig({
       },
       sidebar: [
         { label: 'Docs home', slug: 'docs' },
-        { label: 'Quickstart', slug: 'docs/quickstart', badge: { text: 'Draft', variant: 'caution' } },
-        { label: 'Authoring guide', slug: 'docs/authoring-guide', badge: { text: 'Draft', variant: 'caution' } },
-        { label: 'Tracking guide', slug: 'docs/tracking-guide', badge: { text: 'Draft', variant: 'caution' } },
+        { label: 'Quickstart', slug: 'docs/quickstart' },
+        { label: 'Authoring guide', slug: 'docs/authoring-guide' },
+        { label: 'Tracking guide', slug: 'docs/tracking-guide' },
         {
           label: 'Component reference',
           items: [
             { label: 'Overview', slug: 'docs/components' },
-            { label: '<oelt-mcq>', slug: 'docs/components/oelt-mcq', badge: { text: 'Draft', variant: 'caution' } },
-            { label: '<oelt-branching>', slug: 'docs/components/oelt-branching', badge: { text: 'Draft', variant: 'caution' } },
+            { label: '<oelt-mcq>', slug: 'docs/components/oelt-mcq' },
+            { label: '<oelt-branching>', slug: 'docs/components/oelt-branching' },
+            { label: '<oelt-media>', slug: 'docs/components/oelt-media' },
+            { label: '<oelt-text-entry>', slug: 'docs/components/oelt-text-entry' },
+            { label: '<oelt-quiz>', slug: 'docs/components/oelt-quiz' },
+            { label: '<oelt-likert>', slug: 'docs/components/oelt-likert' },
+            { label: '<oelt-ordering>', slug: 'docs/components/oelt-ordering' },
+            { label: '<oelt-matching>', slug: 'docs/components/oelt-matching' },
+            { label: '<oelt-categorize>', slug: 'docs/components/oelt-categorize' },
           ],
         },
-        { label: 'MCP setup per client', slug: 'docs/mcp-setup', badge: { text: 'Draft', variant: 'caution' } },
-        { label: 'CLI reference', slug: 'docs/cli', badge: { text: 'Draft', variant: 'caution' } },
+        { label: 'MCP setup per client', slug: 'docs/mcp-setup' },
+        { label: 'CLI reference', slug: 'docs/cli' },
         {
           label: 'For machines',
           items: [
