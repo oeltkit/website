@@ -4,6 +4,8 @@ import { loadEnv } from 'vite';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 
+import cloudflare from "@astrojs/cloudflare";
+
 /**
  * Live-demos flag, resolved in Node so it honors BOTH a local `.env` file and a
  * CI/deploy step env (the workflows set DEMOS_ENABLED=true). Unprefixed env vars
@@ -73,6 +75,7 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'ignore',
   markdown: { rehypePlugins: [rehypeFocusableTables] },
+
   integrations: [
     starlight({
       title: 'OELTKit',
@@ -136,6 +139,7 @@ export default defineConfig({
     }),
     sitemap(),
   ],
+
   vite: {
     // A plain global define (not import.meta.env, which Astro's own env plugin
     // re-resolves and would clobber). src/config/site.ts reads this constant.
@@ -143,4 +147,6 @@ export default defineConfig({
       __OELT_DEMOS_ENABLED__: JSON.stringify(DEMOS_ENABLED),
     },
   },
+
+  adapter: cloudflare()
 });
