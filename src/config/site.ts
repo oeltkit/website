@@ -12,12 +12,18 @@ export const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`;
 export const NPM_URL = 'https://www.npmjs.com/org/oeltkit';
 
 /**
- * Component demos stay behind this flag until @oeltkit/components is
- * published. Flipping it on is a config change (set DEMOS_ENABLED=true at
- * build time) plus the dependency add — demo slots are already structured
- * to render the real components. See src/components/DemoSlot.astro.
+ * Live component demos, gated so the off path stays intact (a11y/Lighthouse can
+ * still build the placeholder). Set DEMOS_ENABLED=true at build time to render
+ * the real <oelt-*> components in the demo slots.
+ *
+ * The boolean is baked in by astro.config.mjs' vite.define as the global
+ * __OELT_DEMOS_ENABLED__ (resolved in Node from a `.env` file or the CI/deploy
+ * step env — unprefixed env vars aren't otherwise exposed to the build). The
+ * typeof guard keeps this safe if the define is ever absent (defaults off).
  */
-export const DEMOS_ENABLED = import.meta.env.DEMOS_ENABLED === 'true';
+declare const __OELT_DEMOS_ENABLED__: boolean;
+export const DEMOS_ENABLED =
+  typeof __OELT_DEMOS_ENABLED__ !== 'undefined' && __OELT_DEMOS_ENABLED__ === true;
 
 export interface NavItem {
   label: string;

@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DemoSlot from '../components/DemoSlot.astro';
+import ComponentRuntime from '../components/ComponentRuntime.astro';
 import { components, componentsStatusNote } from '../data/components';
+import { componentDemos } from '../data/component-demos';
 import { withBase } from '../lib/url';
 ---
 
@@ -24,8 +26,10 @@ import { withBase } from '../lib/url';
           <strong>Beta:</strong> the inventory and the markup below come straight from the toolkit's
           generated export (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>) — the
           same source the components ship from. Every component is
-          <strong>{componentsStatusNote}</strong>. The static markup is real and shown now; the
-          live, on-page demos light up when <code>@oeltkit/components</code> publishes with v0.1.
+          <strong>{componentsStatusNote}</strong>. The markup is real, and the demos run live —
+          <code>@oeltkit/components</code> is published (0.1.0). Two components
+          (<code>&lt;oelt-media&gt;</code> and <code>&lt;oelt-hotspot&gt;</code>) need a sample
+          media or image asset we don't ship, so they stay as static examples here.
         </p>
       </div>
 
@@ -53,7 +57,11 @@ import { withBase } from '../lib/url';
                 </p>
               )}
 
-              <DemoSlot component={c.tag} />
+              <DemoSlot component={c.tag} pending={componentDemos[c.tag]?.pending}>
+                {componentDemos[c.tag]?.html && (
+                  <Fragment set:html={componentDemos[c.tag].html} />
+                )}
+              </DemoSlot>
 
               <details class="gallery__details">
                 <summary>View source — the exact markup an LLM writes</summary>
@@ -90,6 +98,8 @@ import { withBase } from '../lib/url';
       </div>
     </div>
   </section>
+
+  <ComponentRuntime />
 </BaseLayout>
 
 <style>

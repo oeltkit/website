@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DemoSlot from '../components/DemoSlot.astro';
+import ComponentRuntime from '../components/ComponentRuntime.astro';
 import { GITHUB_REPO_URL, SITE_TAGLINE } from '../config/site';
 import { withBase } from '../lib/url';
 ---
@@ -47,7 +48,7 @@ import { withBase } from '../lib/url';
 <span class="track-line">→ LMSCommit("") <span class="track-ok">✓ accepted</span></span></code></pre>
         </div>
         <figcaption class="hero__caption">
-          The flow, in the API's own words — a live demo lands here with v0.1.
+          The flow, in the API's own words — see the components running live below.
         </figcaption>
       </figure>
     </div>
@@ -130,7 +131,55 @@ import { withBase } from '../lib/url';
       <DemoSlot
         component="oelt-mcq"
         promise="One real question component plus a branching snippet, with a mini tracking inspector. The caption will read: “This isn't a mockup — these are the actual components, tracking live.”"
-      />
+      >
+        <div class="proof" data-proof>
+          <div class="proof__stage">
+            <oelt-mcq id="home-mcq" mode="single" key="b">
+              <p slot="prompt">Which standard does cmi5 build on?</p>
+              <oelt-option value="a">SCORM 1.2</oelt-option>
+              <oelt-option value="b">xAPI</oelt-option>
+              <oelt-option value="c">AICC</oelt-option>
+              <p slot="correct">Right — cmi5 is an xAPI profile.</p>
+              <p slot="incorrect">Not quite — cmi5 is built on xAPI.</p>
+            </oelt-mcq>
+
+            <oelt-branching id="home-branching" start="n1">
+              <script type="application/json" is:inline>
+                {
+                  "nodes": {
+                    "n1": {
+                      "text": "<p>A learner shares a password with you. You…</p>",
+                      "choices": [
+                        { "label": "Use it", "to": "bad", "value": "use" },
+                        { "label": "Report it", "to": "good", "value": "report" }
+                      ]
+                    },
+                    "good": { "text": "<p>Correct — report and rotate it.</p>", "end": "passed" },
+                    "bad": {
+                      "text": "<p>That's a breach.</p>",
+                      "choices": [{ "label": "Back", "to": "n1", "value": "back" }]
+                    }
+                  }
+                }
+              </script>
+            </oelt-branching>
+          </div>
+
+          <aside class="proof__inspector" aria-label="Tracking inspector">
+            <p class="proof__inspector-bar">Tracking inspector</p>
+            <ol class="proof__log" data-proof-log aria-live="polite">
+              <li class="proof__empty">
+                Answer the question or make a choice — every interaction the components emit shows
+                up here. With no LMS connected it just reports to this panel.
+              </li>
+            </ol>
+          </aside>
+        </div>
+
+        <figcaption class="proof__caption">
+          This isn't a mockup — these are the actual components, tracking live.
+        </figcaption>
+      </DemoSlot>
     </div>
   </section>
 
@@ -161,6 +210,8 @@ import { withBase } from '../lib/url';
       </p>
     </div>
   </section>
+
+  <ComponentRuntime />
 </BaseLayout>
 
 <style>
@@ -303,5 +354,71 @@ import { withBase } from '../lib/url';
 
   .cta-band__sub a {
     color: var(--oelt-color-code-accent);
+  }
+
+  /* Proof section — live components beside a read-only tracking inspector. */
+  .proof {
+    display: grid;
+    gap: var(--oelt-space-xl);
+    align-items: start;
+  }
+
+  @media (min-width: 52rem) {
+    .proof {
+      grid-template-columns: 1.3fr 1fr;
+    }
+  }
+
+  .proof__stage {
+    display: grid;
+    gap: var(--oelt-space-lg);
+  }
+
+  .proof__inspector {
+    background: var(--oelt-color-code-bg);
+    color: var(--oelt-color-code-ink);
+    border-radius: var(--oelt-radius-md);
+    overflow: hidden;
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-sm);
+  }
+
+  .proof__inspector-bar {
+    margin: 0;
+    padding: var(--oelt-space-sm) var(--oelt-space-md);
+    border-bottom: var(--oelt-border-w) solid rgb(255 255 255 / 0.12);
+    font-size: var(--oelt-text-xs);
+    letter-spacing: var(--oelt-tracking-wide);
+    text-transform: uppercase;
+    color: var(--oelt-color-code-accent);
+  }
+
+  .proof__log {
+    margin: 0;
+    padding: var(--oelt-space-md);
+    list-style: none;
+    display: grid;
+    gap: var(--oelt-space-xs);
+  }
+
+  .proof__log li {
+    word-break: break-word;
+  }
+
+  .proof__log code {
+    background: none;
+    color: var(--oelt-color-code-accent);
+  }
+
+  .proof__empty {
+    color: var(--oelt-color-code-ink);
+    opacity: 0.75;
+    font-family: var(--oelt-font-body);
+  }
+
+  .proof__caption {
+    margin-top: var(--oelt-space-lg);
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
   }
 </style>

@@ -19,6 +19,7 @@
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/starlight": "^0.37.7",
+    "@oeltkit/components": "^0.1.0",
     "astro": "^5.18.2",
     "sharp": "^0.35.1"
   },

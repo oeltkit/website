@@ -1,0 +1,46 @@
+---
+/**
+ * Registers the <oelt-*> custom elements on pages that host live demos.
+ *
+ * Vanilla + progressively enhanced (the repo's no-framework rule): a single
+ * module script whose import side-effect calls @oeltkit/components'
+ * defineComponents(). Astro bundles and defers it, so it never blocks render —
+ * the authored demo markup is sensible content with JS off, and upgrades in
+ * place once this runs.
+ *
+ * Gated on DEMOS_ENABLED so the off path stays intact: with the flag off the
+ * script tag is never emitted and the bundle is never requested. Include this
+ * once on any page that uses a live <DemoSlot> (home proof + components page).
+ */
+import { DEMOS_ENABLED } from '../config/site';
+---
+
+{
+  DEMOS_ENABLED && (
+    <script>
+      import '@oeltkit/components';
+
+      // Honest read-only tracking inspector for the home proof section: echoes
+      // the oelt-interaction events the live components emit. No-ops on pages
+      // without a [data-proof] panel (e.g. the components gallery). With no LMS
+      // connected the events simply stop at this panel.
+      const root = document.querySelector('[data-proof]');
+      const log = root?.querySelector('[data-proof-log]');
+      if (root && log) {
+        root.addEventListener('oelt-interaction', (e) => {
+          const detail = (e as CustomEvent).detail ?? {};
+          log.querySelector('.proof__empty')?.remove();
+          const id = (e.target as HTMLElement | null)?.id || detail.id || 'interaction';
+          const bits = [detail.type, detail.result].filter(Boolean).join(' · ');
+          const score =
+            typeof detail.score === 'number' ? ` · score ${Math.round(detail.score * 100)}%` : '';
+          const li = document.createElement('li');
+          const code = document.createElement('code');
+          code.textContent = id;
+          li.append(code, document.createTextNode(` → ${bits}${score}`));
+          log.append(li);
+        });
+      }
+    </script>
+  )
+}

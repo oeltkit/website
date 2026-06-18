@@ -1,7 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
+
+/**
+ * Live-demos flag, resolved in Node so it honors BOTH a local `.env` file and a
+ * CI/deploy step env (the workflows set DEMOS_ENABLED=true). Unprefixed env vars
+ * aren't exposed to import.meta.env by default, so we bake the value in via
+ * vite.define below — keeping `import.meta.env.DEMOS_ENABLED` as the read API in
+ * src/config/site.ts. Default off, so the placeholder path always still builds.
+ */
+const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
+const DEMOS_ENABLED = (env.DEMOS_ENABLED ?? process.env.DEMOS_ENABLED) === 'true';
 
 /**
  * Deploy-target switching (default: GitHub Pages project site).
@@ -125,4 +136,11 @@ export default defineConfig({
     }),
     sitemap(),
   ],
+  vite: {
+    // A plain global define (not import.meta.env, which Astro's own env plugin
+    // re-resolves and would clobber). src/config/site.ts reads this constant.
+    define: {
+      __OELT_DEMOS_ENABLED__: JSON.stringify(DEMOS_ENABLED),
+    },
+  },
 });

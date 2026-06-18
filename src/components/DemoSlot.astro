@@ -15,16 +15,34 @@ interface Props {
   component: string;
   /** Short line about what the live demo will show. */
   promise?: string;
+  /**
+   * Set when this component can't be demoed live here (it needs a binary asset
+   * we don't ship — e.g. a captioned video, a diagram image). With demos on,
+   * the slot shows this note instead of an empty live figure; we don't invent
+   * the asset. The verbatim markup still shows in the card's "View source".
+   */
+  pending?: string;
 }
 
-const { component, promise } = Astro.props;
+const { component, promise, pending } = Astro.props;
+
+const showLive = DEMOS_ENABLED && !pending;
+const showPending = DEMOS_ENABLED && !!pending;
 ---
 
 {
-  DEMOS_ENABLED ? (
+  showLive ? (
     <figure class="demo-slot demo-slot--live">
       <slot />
     </figure>
+  ) : showPending ? (
+    <div class="demo-slot demo-slot--placeholder">
+      <p class="demo-slot__flag demo-slot__flag--asset">Static example</p>
+      <p class="demo-slot__name">
+        <code>&lt;{component}&gt;</code>
+      </p>
+      <p class="demo-slot__copy">{pending}</p>
+    </div>
   ) : (
     <div class="demo-slot demo-slot--placeholder">
       <p class="demo-slot__flag">Coming with v0.1</p>
@@ -86,9 +104,45 @@ const { component, promise } = Astro.props;
     margin-bottom: 0;
   }
 
+  .demo-slot__flag--asset {
+    color: var(--oelt-color-ink-soft);
+    background: var(--oelt-color-surface-2);
+    border-color: var(--oelt-color-line-strong);
+  }
+
   .demo-slot--live {
     border: var(--oelt-border-w) solid var(--oelt-color-line);
     background: var(--oelt-color-surface);
     padding: var(--oelt-space-xl);
+
+    /*
+     * @oeltkit/components reads its own token contract (--oelt-color-fg /
+     * --oelt-color-primary / --oelt-space-1..4 / --oelt-radius / …, with
+     * hardcoded fallbacks). Map that contract onto the site's design tokens so
+     * the live components inherit this exact theme — dark/light included — and
+     * stay token-only per the no-CSS-framework rule. --oelt-color-bg and
+     * --oelt-color-focus already exist site-wide. --oelt-font is left unset so
+     * it falls back to `inherit`.
+     */
+    --oelt-color-fg: var(--oelt-color-ink);
+    --oelt-color-primary: var(--oelt-color-accent);
+    --oelt-color-correct: var(--oelt-color-accent-strong);
+    --oelt-color-incorrect: var(--oelt-color-focus);
+    --oelt-radius: var(--oelt-radius-md);
+    --oelt-space-1: var(--oelt-space-2xs);
+    --oelt-space-2: var(--oelt-space-xs);
+    --oelt-space-3: var(--oelt-space-md);
+    --oelt-space-4: var(--oelt-space-lg);
+    --oelt-motion-duration: var(--oelt-duration-base);
+  }
+
+  /* The components inject their own structural CSS (display:block, etc.); these
+     first/last resets just keep the figure's padding tidy around them. */
+  .demo-slot--live > :first-child {
+    margin-block-start: 0;
+  }
+
+  .demo-slot--live > :last-child {
+    margin-block-end: 0;
   }
 </style>
