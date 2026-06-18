@@ -1,13 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DemoSlot from '../components/DemoSlot.astro';
-import { components } from '../data/components';
+import { components, componentsStatusNote } from '../data/components';
 import { withBase } from '../lib/url';
 ---
 
 <BaseLayout
   title="Components"
-  description="The OELTKit component gallery: live rendered interaction components, the exact markup an LLM writes, keyboard maps, screen-reader behavior, and the tracking events each one emits."
+  description="The OELTKit component gallery: the interaction components, the exact markup an LLM writes, their accessibility behavior, and the tracking they emit."
   path="/components/"
 >
   <section class="section">
@@ -21,11 +21,11 @@ import { withBase } from '../lib/url';
 
       <div class="todo-note" role="note">
         <p>
-          <strong>Beta:</strong> the markup, keyboard maps, and tracking events below are taken from
-          the frozen component specs in
-          <a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>. Every component is
-          implemented and tested in the toolkit; the live, on-page demos light up when
-          <code>@oeltkit/components</code> publishes with v0.1.
+          <strong>Beta:</strong> the inventory and the markup below come straight from the toolkit's
+          generated export (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>) — the
+          same source the components ship from. Every component is
+          <strong>{componentsStatusNote}</strong>. The static markup is real and shown now; the
+          live, on-page demos light up when <code>@oeltkit/components</code> publishes with v0.1.
         </p>
       </div>
 
@@ -33,62 +33,56 @@ import { withBase } from '../lib/url';
         {
           components.map((c) => (
             <article class="card gallery__entry" aria-labelledby={`c-${c.tag}`}>
-              <h2 id={`c-${c.tag}`} class="gallery__title">
-                <code>&lt;{c.tag}&gt;</code> {c.name}
-              </h2>
-              <p>{c.blurb}</p>
+              <div class="gallery__head">
+                <h2 id={`c-${c.tag}`} class="gallery__title">
+                  <code>&lt;{c.tag}&gt;</code> <span class="gallery__label">{c.label}</span>
+                </h2>
+                <span class="gallery__status">{c.status}</span>
+              </div>
+
+              {c.elements.length > 1 && (
+                <p class="gallery__family">
+                  Ships{' '}
+                  {c.elements.map((e, i) => (
+                    <>
+                      {i > 0 ? ', ' : ''}
+                      <code>&lt;{e}&gt;</code>
+                    </>
+                  ))}
+                  .
+                </p>
+              )}
 
               <DemoSlot component={c.tag} />
 
               <details class="gallery__details">
                 <summary>View source — the exact markup an LLM writes</summary>
-                {c.sourceExample ? (
-                  <pre>
-                    <code>{c.sourceExample}</code>
-                  </pre>
-                ) : (
-                  <p class="gallery__stub">
-                    TODO: markup sample pending the <code>&lt;{c.tag}&gt;</code> spec in the main
-                    repo.
-                  </p>
-                )}
+                <pre tabindex="0">
+                  <code>{c.example}</code>
+                </pre>
               </details>
 
               <details class="gallery__details">
-                <summary>Accessibility — keyboard map &amp; screen-reader behavior</summary>
-                {c.a11yNotes ? (
-                  <ul>
-                    {c.a11yNotes.map((n) => (
-                      <li>{n}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p class="gallery__stub">
-                    TODO: keyboard map and SR notes pending the component's a11y test report in the
-                    main repo.
-                  </p>
-                )}
+                <summary>Accessibility — how it behaves without a mouse</summary>
+                <p class="gallery__a11y">{c.a11y}</p>
               </details>
 
-              <details class="gallery__details">
-                <summary>Tracking — events this component emits</summary>
-                {c.trackingEvents ? (
-                  <ul>
-                    {c.trackingEvents.map((e) => (
-                      <li>
-                        <code>{e}</code>
-                      </li>
-                    ))}
-                  </ul>
+              <p class="gallery__foot">
+                Emits a single <code>oelt-interaction</code> the runtime forwards to your LMS — see
+                the <a href={withBase('/docs/tracking-guide/')}>tracking guide</a>.
+                {c.docsPath ? (
+                  <>
+                    {' '}
+                    <a href={withBase(c.docsPath)}>
+                      Read the <code>&lt;{c.tag}&gt;</code> reference →
+                    </a>
+                  </>
                 ) : (
-                  <p class="gallery__stub">
-                    TODO: tracking events pending the tracking spec in the main repo.
-                  </p>
+                  <>
+                    {' '}
+                    <a href={withBase('/docs/components/')}>See the component reference →</a>
+                  </>
                 )}
-              </details>
-
-              <p class="gallery__docs-link">
-                <a href={withBase(c.docsPath)}>Read the {c.name.toLowerCase()} docs →</a>
               </p>
             </article>
           ))
@@ -116,9 +110,42 @@ import { withBase } from '../lib/url';
     margin-top: var(--oelt-space-xl);
   }
 
+  .gallery__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--oelt-space-sm);
+    flex-wrap: wrap;
+  }
+
   .gallery__title code {
     background: none;
     color: var(--oelt-color-accent);
+  }
+
+  .gallery__label {
+    font-weight: 400;
+    color: var(--oelt-color-ink-soft);
+    font-size: var(--oelt-text-md);
+  }
+
+  .gallery__status {
+    flex: none;
+    font-family: var(--oelt-font-mono);
+    font-size: var(--oelt-text-xs);
+    letter-spacing: var(--oelt-tracking-wide);
+    text-transform: uppercase;
+    color: var(--oelt-color-warn-ink);
+    background: var(--oelt-color-warn-bg);
+    border: var(--oelt-border-w) solid var(--oelt-color-warn-line);
+    border-radius: var(--oelt-radius-pill);
+    padding: 0.15rem 0.6rem;
+  }
+
+  .gallery__family {
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
+    margin: 0 0 var(--oelt-space-sm);
   }
 
   .gallery__details {
@@ -137,17 +164,16 @@ import { withBase } from '../lib/url';
     color: var(--oelt-color-accent);
   }
 
-  .gallery__stub {
-    color: var(--oelt-color-warn-ink);
-    background: var(--oelt-color-warn-bg);
-    border-radius: var(--oelt-radius-sm);
-    display: inline-block;
-    padding: var(--oelt-space-2xs) var(--oelt-space-sm);
+  .gallery__a11y {
+    margin: var(--oelt-space-sm) 0 0;
     font-size: var(--oelt-text-sm);
-    margin-top: var(--oelt-space-sm);
+    color: var(--oelt-color-ink-soft);
+    max-width: var(--oelt-measure);
   }
 
-  .gallery__docs-link {
+  .gallery__foot {
     margin: var(--oelt-space-md) 0 0;
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
   }
 </style>

@@ -20,6 +20,7 @@ The toolkit is pre-v1.0 and these docs are drafts. Anything marked **TODO** is p
 - **[Component reference](components/)** — one page per interaction component.
 - **[MCP setup](mcp-setup/)** — Claude Desktop, Cowork, and Claude Code.
 - **[CLI reference](cli/)** — every `oelt` command.
+- **[Recipes](recipes/)** _(draft)_ — copy-paste prompts from a source file to a shippable course.
 
 ## For machines
 

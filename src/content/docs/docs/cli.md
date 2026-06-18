@@ -64,6 +64,12 @@ oelt package <dir|file.oeltcourse> --target scorm12|scorm2004|cmi5|web [--out fi
 
 Generates the target manifest (`imsmanifest.xml` / `cmi5.xml`), injects the runtime adapter, and produces a self-contained importable zip (default name `<course-id>-<target>.zip`). Never hand-edit the generated manifests — they come from `course.json`.
 
+`--target` takes one of `scorm12`, `scorm2004`, `cmi5`, or `web`:
+
+:::caution[SCORM 2004 is export-only for now]
+`scorm12`, `cmi5`, and `web` are the **verified real-LMS-conformant** targets. `scorm2004` packages fine and prints a known-limitation notice: completion/success do not reliably roll up to the registration on a real LMS yet (OQ-004). Prefer `scorm12` or `cmi5` when tracking must be guaranteed — see [Standards](../../standards/) and the [tracking guide](../tracking-guide/).
+:::
+
 Not sure which target your LMS wants? Start with `scorm12` — see [Standards](../../standards/).
 
 ## `oelt export` / `oelt import`

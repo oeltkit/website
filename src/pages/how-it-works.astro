@@ -1,6 +1,15 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../lib/url';
+import course from '../data/toolkit-export/walkthrough/course.json';
+import validateError from '../data/toolkit-export/walkthrough/validate-error.json';
+import checkHtml from '../data/toolkit-export/walkthrough/pages/check.html?raw';
+import harness from '../data/toolkit-export/walkthrough/screenshots/harness.png';
+
+const courseJson = JSON.stringify(course, null, 2);
+const validateErrorJson = JSON.stringify(validateError, null, 2);
+const courseId = course.id;
 ---
 
 <BaseLayout
@@ -52,11 +61,12 @@ import { withBase } from '../lib/url';
 
       <div class="todo-note" role="note">
         <p>
-          The manifest and page markup below use the real schema and component markup from the
-          toolkit specs (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>); the
-          validator output shows the actual <code>oelt validate --json</code> finding format. The
-          one remaining placeholder is the LMS import screenshot, captured once a packaged course is
-          imported into SCORM Cloud.
+          Everything below is the <strong>real</strong> walkthrough course shipped in the toolkit
+          (<a href="https://github.com/oeltkit/oeltkit">oeltkit/oeltkit</a>): a genuine
+          <code>course.json</code>, a real content page, the actual <code>oelt validate</code>
+          output, and a screenshot of it running in the local LMS harness. The one remaining
+          placeholder is a real-LMS import screenshot — captured from a SCORM Cloud run, not mocked
+          up.
         </p>
       </div>
 
@@ -64,102 +74,74 @@ import { withBase } from '../lib/url';
         <section class="walkthrough__step">
           <h3>1 · The manifest: <code>course.json</code></h3>
           <p>
-            One declarative file: title, structure, completion rules, score weighting. Declared,
-            not hand-wired — the runtime enforces it on every LMS target.
+            One declarative file: title, structure, completion rule, and score source. Declared, not
+            hand-wired — the runtime enforces it on every target. This course completes when its one
+            required interaction passes, and scores from that same question with a mastery of 80%.
           </p>
           <div class="code-panel">
             <p class="code-panel__bar">course.json</p>
-            <pre tabindex="0"><code>{`{
-  "oelt": "0.1",
-  "id": "com.example.data-privacy",
-  "title": "Data Privacy Essentials",
-  "lang": "en",
-  "targets": ["scorm12", "scorm2004", "cmi5", "web"],
-  "tracking": {
-    "completion": { "rule": "required-interactions-passed" },
-    "score": { "rule": "weighted-interactions", "mastery": 0.8 }
-  },
-  "structure": [
-    { "id": "m1", "title": "Foundations", "pages": [
-      { "id": "intro", "title": "Why privacy matters", "src": "pages/intro.html" },
-      { "id": "quiz", "title": "Final quiz", "src": "pages/quiz.html",
-        "interactions": [{ "id": "final-quiz", "type": "quiz", "required": true }] }
-    ] }
-  ]
-}`}</code></pre>
+            <pre tabindex="0"><code>{courseJson}</code></pre>
           </div>
         </section>
 
         <section class="walkthrough__step">
-          <h3>2 · A content page with a branching scenario</h3>
+          <h3>2 · A content page with a real interaction</h3>
           <p>
-            Plain HTML the LLM wrote, with an <code>&lt;oelt-branching&gt;</code> element where the
-            decision point goes. No build step, no framework.
+            Plain HTML the LLM wrote, with an <code>&lt;oelt-mcq&gt;</code> where the knowledge check
+            goes. Its <code>id</code> (<code>q1</code>) matches the interaction declared in the
+            manifest — that's the whole wiring. No build step, no framework.
           </p>
           <div class="code-panel">
-            <p class="code-panel__bar">lesson-2.html</p>
-            <pre tabindex="0"><code>{`<section>
-  <h1>Spot the phishing attempt</h1>
-  <oelt-branching id="phish" start="n1">
-    <script type="application/json">
-      {
-        "nodes": {
-          "n1": {
-            "text": "<p>An email asks you to reset your password via a link. You…</p>",
-            "choices": [
-              { "label": "Click the link", "to": "bad", "value": "click" },
-              { "label": "Open the site yourself", "to": "good", "value": "direct" }
-            ]
-          },
-          "good": { "text": "<p>Right — navigate there directly.</p>", "end": "passed" },
-          "bad":  { "text": "<p>That link could be spoofed.</p>", "choices": [{ "label": "Try again", "to": "n1", "value": "retry" }] }
-        }
-      }
-    </script>
-  </oelt-branching>
-</section>`}</code></pre>
+            <p class="code-panel__bar">pages/check.html</p>
+            <pre tabindex="0"><code>{checkHtml}</code></pre>
           </div>
         </section>
 
         <section class="walkthrough__step">
           <h3>3 · Validation — including the part where it catches a mistake</h3>
           <p>
-            The validator checks accessibility, tracking wiring, and package structure, and reports
-            findings in a format the AI can act on. Honesty matters here: it will catch things, and
-            that's the point.
+            <code>oelt validate</code> checks the schema, id uniqueness, that declared interactions
+            exist in the HTML, media accessibility, and tracking reachability. On the course above it
+            reports <code>{`{ "ok": true, "findings": [] }`}</code>. Introduce a mistake — declare an
+            interaction <code>q2</code> that no element provides — and it catches it:
           </p>
           <div class="code-panel">
-            <p class="code-panel__bar">oelt validate · output</p>
-            <pre tabindex="0"><code>{`$ oelt validate ./data-privacy --json
-{
-  "ok": false,
-  "findings": [
-    {
-      "level": "error",
-      "code": "interaction-missing-in-html",
-      "message": "Declared interaction 'final-quiz' not found in page HTML.",
-      "where": "module m1, page \\"Final quiz\\" (pages/quiz.html)",
-      "message_human": "The page \\"Final quiz\\" declares an interaction \\"final-quiz\\", but pages/quiz.html has no element with that id. Add an element like <oelt-quiz id=\\"final-quiz\\">, or remove it from the manifest."
-    }
-  ]
-}`}</code></pre>
+            <p class="code-panel__bar">oelt validate ./{courseId} --json</p>
+            <pre tabindex="0"><code>{validateErrorJson}</code></pre>
           </div>
           <p class="walkthrough__note">
             Every finding carries a <code>message_human</code> sentence that names the page by
-            title — so an AI assistant can read it and fix its own output, then re-validate.
+            title — so an AI assistant can read it and fix its own output, then re-validate. Honesty
+            matters here: it will catch things, and that's the point.
           </p>
         </section>
 
         <section class="walkthrough__step">
-          <h3>4 · The package, imported</h3>
+          <h3>4 · Running it — the tracking, live</h3>
           <p>
-            <code>oelt package</code> produces a zip; the LMS sees a standards-compliant course. A
-            screenshot of a real import lands here once the first verification run is done.
+            <code>oelt preview</code> serves the course in a local fake-LMS harness with a live
+            tracking inspector. Here's the knowledge check answered correctly: the inspector shows
+            the course reporting <code>completed</code> / <code>passed</code> with a score of
+            100 — the same SCORM 1.2 calls a real LMS receives.
           </p>
-          <div class="code-panel">
-            <p class="code-panel__bar">LMS import</p>
-            <pre tabindex="0"><code># TODO: screenshot of the packaged zip imported into SCORM Cloud
-# (first verification target)</code></pre>
+          <figure class="walkthrough__shot">
+            <Image
+              src={harness}
+              width={1024}
+              alt="The walkthrough course in the local fake-LMS harness. The multiple-choice knowledge check is answered correctly, and the tracking inspector panel shows lesson status completed and passed with a score of 100 out of 100."
+            />
+            <figcaption>
+              The walkthrough course in the SCORM 1.2 harness, knowledge check answered, tracking
+              inspector showing <code>completed</code> / <code>passed</code> / score 100.
+            </figcaption>
+          </figure>
+          <div class="todo-note" role="note">
+            <p>
+              <strong>Coming:</strong> a screenshot of the same packaged course imported and
+              completing in a <em>real</em> LMS (SCORM Cloud). That needs an authenticated LMS
+              session a local run can't produce, so it lands here after the conformance run — we
+              don't mock one up.
+            </p>
           </div>
         </section>
       </div>
@@ -270,5 +252,24 @@ import { withBase } from '../lib/url';
   .walkthrough pre {
     padding: var(--oelt-space-lg);
     font-size: var(--oelt-text-sm);
+  }
+
+  .walkthrough__shot {
+    margin: var(--oelt-space-md) 0 0;
+    max-width: var(--oelt-content-width);
+  }
+
+  .walkthrough__shot img {
+    width: 100%;
+    height: auto;
+    border: var(--oelt-border-w) solid var(--oelt-color-line);
+    border-radius: var(--oelt-radius-md);
+    display: block;
+  }
+
+  .walkthrough__shot figcaption {
+    margin-top: var(--oelt-space-sm);
+    font-size: var(--oelt-text-sm);
+    color: var(--oelt-color-ink-soft);
   }
 </style>

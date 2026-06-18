@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "test:a11y": "playwright test",
     "test:lighthouse": "lhci autorun",
+    "sync:toolkit-export": "node scripts/sync-toolkit-export.mjs",
     "astro": "astro"
   },
   "dependencies": {

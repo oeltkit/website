@@ -7,21 +7,33 @@ Ambiguities found while building the site, per the CLAUDE.md workflow. Items 2�
 Earlier the docs pages were stubs marked with a `Draft` sidebar badge. They have since been filled with real content sourced from the main-repo specs (`oeltkit/oeltkit`), so the `Draft` badges were removed from the sidebar — the site-wide `beta` banner still carries the "pre-v1.0, APIs may change" caveat. The blog launch post remains `draft: true`.
 **Decide:** fine as-is.
 
-## 2. Component inventory — RESOLVED
+## 2. Component inventory — RESOLVED (now from the committed export)
 
-The full launch inventory (nine components) is now in `src/data/components.ts` and the component reference docs, synced from the frozen specs in `oeltkit/oeltkit/specs/components/`: `<oelt-mcq>`, `<oelt-branching>`, `<oelt-media>`, `<oelt-text-entry>`, `<oelt-quiz>`, `<oelt-likert>`, `<oelt-ordering>`, `<oelt-matching>`, `<oelt-categorize>`. Markup, attributes, keyboard maps, and tracking events are quoted from those specs, not guessed. Live on-page demos still wait on `@oeltkit/components` publishing (the `DEMOS_ENABLED` flag).
+The `/components` gallery is now generated from the committed toolkit export snapshot (`src/data/toolkit-export/components.json` → `src/data/components.ts`), not hand-transcribed. That export carries the **full real inventory — twelve gallery entries / fourteen elements**, more than the earlier nine: it adds `<oelt-hotspot>`, `<oelt-reflection>`, and an `<oelt-tabs>` entry that bundles `<oelt-tabs>` / `<oelt-accordion>` / `<oelt-flip-cards>`. Each card shows the export's verbatim example markup (static, shown now) and its `a11y` summary, with the `beta` status surfaced. Live on-page demos still wait on `@oeltkit/components` publishing (the `DEMOS_ENABLED` flag). **Note:** the docs *component reference* still has dedicated pages for the original nine only; the three newer components link to the reference overview until their pages are written (they need attribute/keyboard detail not in the export — not invented here).
 
-## 3. Walkthrough artifacts (how-it-works) — RESOLVED (one item pending)
+## 3. Walkthrough artifacts (how-it-works) — RESOLVED (one item still pending, by design)
 
-The `course.json` manifest and the `<oelt-branching>` page markup are now real (from the manifest/component specs), and the validator step shows the actual `oelt validate --json` finding format (`{ ok, findings[] }` with `message_human`). **Still pending:** a screenshot of a packaged course imported into an LMS — left as the one placeholder, to be captured from a real SCORM Cloud import rather than mocked up.
+The how-it-works walkthrough now renders the **real** toolkit walkthrough from the committed snapshot: the actual `course.json` ("Spotting Phishing Emails", targets `scorm12`/`cmi5`/`web`), the real `pages/check.html` content page with its `<oelt-mcq>`, the real `oelt validate` output including the genuine caught error (`code: "interaction-missing"`, with `message_human`), and the real `harness.png` screenshot of the course completing in the local fake-LMS harness (`completed`/`passed`/score 100). **Still pending:** `lms-import.png` — a screenshot of the package completing in a *real* LMS (SCORM Cloud), which can't be produced locally. Left as the documented placeholder; **not mocked up** (honesty constraint).
 
-## 4. The SCORM 1.2 collapse rule — RESOLVED
+## 4. The SCORM 1.2 collapse rule — RESOLVED (now verbatim)
 
-The tracking guide now documents the rule prominently (a `danger` callout) with the exact normative wording from the main-repo tracking spec: score rule + `mastery` ⇒ `passed`/`failed` in `lesson_status`; otherwise `completed`/`incomplete`. The per-target mapping table and the 3 KB suspend budget are included.
+The tracking guide quotes the collapse rule **verbatim** from `specs/tracking-semantics.md §4.2` (a `danger` callout): the normative "score rule + `mastery` ⇒ `passed`/`failed`; otherwise `completed`/`incomplete`" wording plus its three consequences. The page also now carries the **OQ-004 SCORM 2004 known limitation** (completion/success don't reliably roll up on a real LMS; 1.2/cmi5/web are the verified targets), the per-target mapping table, and the 3 KB suspend budget.
 
-## 5. CLI surface — RESOLVED
+## 5. CLI surface — RESOLVED (synced to `cli.json`)
 
-The CLI reference now documents all six verbs (`new`, `validate`, `preview`, `package`, `export`, `import`), their flags, the `--target` values, the `.oeltcourse` exchange format, and the "package refuses on validation errors" rule — from the main-repo CLI behavior. Install is flagged beta: `@oeltkit/cli` is not yet on npm.
+The CLI reference is kept in sync with the committed `cli.json` snapshot: all six verbs (`new`, `validate`, `preview`, `package`, `export`, `import`), their flags, the `--target` values, the `.oeltcourse` exchange format, and the "package refuses on validation errors" rule. It now also carries the **SCORM 2004 export-only caveat** (OQ-004) from `cli.json`. Install is flagged beta: `@oeltkit/cli` is not yet on npm.
+
+## 5a. Committed toolkit export snapshot — RESOLVED (new)
+
+`src/data/toolkit-export/` is a **committed snapshot** of the toolkit's `docs/website-export/`, so CI (and a bare clone of this repo) builds without the sibling `oeltkit/oeltkit` checked out. Re-sync with `npm run sync:toolkit-export` (defaults to `../oeltkit`, override with `OELTKIT_REPO=`); the toolkit repo stays the source of truth. See `src/data/toolkit-export/README.md`. **Do not hand-edit** the snapshot.
+
+## 5b. Recipes section — RESOLVED (prompts are visible drafts)
+
+Added a **Recipes** docs section (`docs/recipes/` — overview + the six SIMPLICITY §4 recipes: PowerPoint, storyboard, design prototype, update, translate, quiz-from-policy). Each prompt is a **draft, not yet CI-verified**, marked with a sidebar `Draft` badge and an in-page caution callout. **Mechanism note:** these pages do *not* use Starlight's `draft: true` frontmatter — that flag *excludes* a page from the production build, which would hide the section and break the sidebar/sitemap. We use visible draft markers instead. SIMPLICITY's "recipes as executable CI-tested docs" and the per-LMS upload guides (Moodle/Cornerstone/Docebo/TalentLMS/SCORM Cloud, with screenshots) are noted as **coming** — not written, no screenshots invented.
+
+## 5c. Standards page — SCORM 2004 caveat — RESOLVED (new)
+
+The Standards page SCORM 2004 target now reads "export available; completion reporting not yet verified — 1.2 and cmi5 are the verified targets" (OQ-004). The per-component conformance blurb was also de-hardcoded from "all nine" to "every launch component" (links to the gallery), since the gallery now lists the fuller export inventory.
 
 ## 6. GitHub org/repo and npm org
 

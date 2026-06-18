@@ -102,6 +102,19 @@ export default defineConfig({
         { label: 'MCP setup per client', slug: 'docs/mcp-setup' },
         { label: 'CLI reference', slug: 'docs/cli' },
         {
+          label: 'Recipes',
+          badge: { text: 'Draft', variant: 'caution' },
+          items: [
+            { label: 'Overview', slug: 'docs/recipes' },
+            { label: 'Course from a PowerPoint', slug: 'docs/recipes/course-from-powerpoint' },
+            { label: 'Storyboard to SCORM', slug: 'docs/recipes/storyboard-to-scorm' },
+            { label: 'Design prototype to course', slug: 'docs/recipes/design-prototype-to-course' },
+            { label: 'Update an existing course', slug: 'docs/recipes/update-existing-course' },
+            { label: 'Translate my course', slug: 'docs/recipes/translate-my-course' },
+            { label: 'Quiz from a policy document', slug: 'docs/recipes/quiz-from-policy-document' },
+          ],
+        },
+        {
           label: 'For machines',
           items: [
             { label: 'llms.txt', link: '/llms.txt' },

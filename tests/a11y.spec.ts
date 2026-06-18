@@ -31,6 +31,13 @@ const ROUTES = [
   '/docs/components/oelt-categorize/',
   '/docs/mcp-setup/',
   '/docs/cli/',
+  '/docs/recipes/',
+  '/docs/recipes/course-from-powerpoint/',
+  '/docs/recipes/storyboard-to-scorm/',
+  '/docs/recipes/design-prototype-to-course/',
+  '/docs/recipes/update-existing-course/',
+  '/docs/recipes/translate-my-course/',
+  '/docs/recipes/quiz-from-policy-document/',
 ];
 
 for (const route of ROUTES) {

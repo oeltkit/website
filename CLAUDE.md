@@ -12,6 +12,9 @@ Marketing + docs site for OELTKit (open source LLM-first e-learning toolkit). Th
 
 ## Workflow
 
-- Self-check before done: `npm run build`, `npm run test:a11y`, Lighthouse CI locally.
-- Copy changes (anything user-visible-textual) get flagged `COPY CHANGE` in the PR for human review.
-- Ambiguities → `OPEN-QUESTIONS.md`, then stop. Don't guess on positioning.
+Solo project, no PR review. Automated gates stand in for a reviewer — they're non-negotiable; the ceremony around them is gone.
+
+- **Automated gates (blocking):** `npm run build`, `npm run test:a11y` (axe clean), and Lighthouse ≥95 all categories. A red gate blocks — never declare done on a failing gate, never weaken a check to pass it.
+- **Commit straight to `main`** with short conventional-commit subjects; no PRs. Batch related work freely.
+- **Copy changes** (anything user-visible-textual): put `COPY CHANGE` in the commit body so it's greppable for an async human read — the build does not wait on it.
+- **Ambiguity:** for small, reversible wording/layout calls, decide and keep moving. **Stop only on positioning** — never invent or reframe positioning, features, or API details; park those in `OPEN-QUESTIONS.md`. Positioning is the one expensive-to-unwind class here.

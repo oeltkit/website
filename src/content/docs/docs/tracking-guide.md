@@ -59,13 +59,23 @@ Tracking is configured in the `tracking` block of `course.json`. Omit it for the
 
 ## The SCORM 1.2 collapse rule
 
-:::danger[Read this before you ship to SCORM 1.2]
-SCORM 1.2 has **one** status field (`cmi.core.lesson_status`) for both completion *and* success. OELTKit collapses your richer model into it with a fixed, normative rule — you don't implement it, but you should know what survives:
+SCORM 1.2 has **one** status field (`cmi.core.lesson_status`) for both completion *and* success. OELTKit collapses your richer model into it with a fixed, normative rule — you don't implement it, but you should know what survives. This is the exact rule from the toolkit's tracking-semantics spec (§4.2), quoted verbatim:
 
-- **If a score rule and a `mastery` value are both defined**, the course reports **`passed` / `failed`** in `lesson_status`, decided by score ≥ mastery. A learner who finishes but scores below mastery is **`failed`**, not merely incomplete.
-- **Otherwise**, the course reports **`completed` / `incomplete`**, decided by the completion rule. Any score is still written to `score.raw` but does not change the status.
+:::danger[The collapse rule (normative — do not improvise)]
+> **If a score rule producing a score is defined together with a `mastery` value**, the course reports **`passed` / `failed`** in `lesson_status`, decided by score ≥ mastery.
+> **Otherwise** the course reports **`completed` / `incomplete`** in `lesson_status`, decided by the completion rule.
 
-SCORM 2004 and cmi5 do **not** collapse — they report completion and success on separate channels.
+Consequences:
+
+- `mastery` set ⇒ `lesson_status` carries success, and a learner who finishes but scores below mastery is **`failed`**, not merely incomplete.
+- No `mastery` ⇒ `lesson_status` carries only completion; score (if any) is reported in `score.raw` but does not change status.
+- `browsed` / `not attempted` are runtime lifecycle states, never authored.
+:::
+
+On SCORM 2004 and cmi5 no collapse happens: completion and success are reported on their own channels (`completion_status` + `success_status`; `completed` then `passed`/`failed` statements).
+
+:::caution[SCORM 2004 completion is not yet verified (OQ-004)]
+The runtime writes the SCORM 2004 RTE values correctly and the LMS accepts them, but completion/success do not reliably **roll up** to the registration on a real LMS (checked on SCORM Cloud). **SCORM 1.2, cmi5, and web are the verified-conformant targets;** SCORM 2004 export stays available but its completion reporting isn't guaranteed. Prefer SCORM 1.2 or cmi5 when tracking must be guaranteed.
 :::
 
 ## What each target speaks

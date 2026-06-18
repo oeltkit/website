@@ -39,8 +39,13 @@ import { withBase } from '../lib/url';
         <div class="targets__item">
           <dt>SCORM 2004</dt>
           <dd>
-            Richer status reporting than 1.2 (separate completion and success). Choose it when your
-            LMS supports it and you care about that distinction.
+            Richer status reporting than 1.2 (separate completion and success). Status:
+            <strong
+              >export available; completion reporting not yet verified — 1.2 and cmi5 are the
+              verified targets</strong
+            >. The runtime writes the right values and the LMS accepts them, but completion/success
+            don't yet reliably roll up to the registration on a real LMS (OQ-004). Prefer SCORM 1.2
+            or cmi5 when tracking must be guaranteed.
           </dd>
         </div>
         <div class="targets__item">
@@ -85,14 +90,11 @@ import { withBase } from '../lib/url';
 
       <h3>Per-component conformance</h3>
       <p>
-        All nine launch components — <code>&lt;oelt-mcq&gt;</code>, <code>&lt;oelt-branching&gt;</code>,
-        <code>&lt;oelt-media&gt;</code>, <code>&lt;oelt-text-entry&gt;</code>,
-        <code>&lt;oelt-quiz&gt;</code>, <code>&lt;oelt-likert&gt;</code>,
-        <code>&lt;oelt-ordering&gt;</code>, <code>&lt;oelt-matching&gt;</code>, and
-        <code>&lt;oelt-categorize&gt;</code> — ship with Playwright + axe-core tests that run in CI,
-        and are keyboard-operable by construction (see each component's keyboard map in the
-        <a href={withBase('/docs/components/')}>component reference</a>). A manual screen-reader pass
-        (NVDA + VoiceOver) is the gate from <em>beta</em> to <em>stable</em>.
+        Every launch component (see the full set in the
+        <a href={withBase('/components/')}>component gallery</a>) ships with Playwright + axe-core
+        tests that run in CI, and is keyboard-operable by construction (see each component's keyboard
+        map in the <a href={withBase('/docs/components/')}>component reference</a>). Components are in
+        <em>beta</em>; a manual screen-reader pass (NVDA + VoiceOver) is the gate to <em>stable</em>.
       </p>
       <div class="todo-note" role="note">
         <p>
